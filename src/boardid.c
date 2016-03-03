@@ -45,7 +45,7 @@ static void usage()
     printf("\n");
     printf("Options:\n");
     printf("  -b <platform>   Use the board id method for the specified platform\n");
-    printf("  -n <count>      Print out count digits of identifier (least significant digits)\n");
+    printf("  -n <count>      Print out count characters (least significant ones)\n");
     printf("  -r <prefix>     Root directory prefix (used for unit tests)\n");
     printf("  -v              Print out the program version\n");
     printf("\n");
