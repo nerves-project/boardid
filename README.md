@@ -1,4 +1,5 @@
 # boardid
+[![Build Status](https://travis-ci.org/fhunleth/boardid.svg?branch=master)](https://travis-ci.org/fhunleth/boardid)
 
 This program looks up a platform-specific serial number and prints it. If
 your application needs a way identify a board, this could be it.

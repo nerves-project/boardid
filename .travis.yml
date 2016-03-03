@@ -1,0 +1,11 @@
+language: c
+
+# Use the container-based infrastructure
+sudo: false
+
+compiler:
+    - gcc
+
+script:
+    - make && make check
+
