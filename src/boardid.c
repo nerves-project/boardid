@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+#include <getopt.h>
 #include <err.h>
 #include <stdlib.h>
 #include <stdio.h>
