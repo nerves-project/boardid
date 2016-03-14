@@ -29,4 +29,11 @@ Options:
 
 ## Example
 
+Here's an example run on a Lego Mindstorms EV3 brick running ev3dev:
+
+```
+robot@ev3dev:~$ boardid 
+00000016534b129d
+robot@ev3dev:~$ 
+```
 
