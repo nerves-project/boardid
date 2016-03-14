@@ -31,7 +31,7 @@
 
 FILE *fopen_helper(const char *filename, const char *mode);
 
-int raspberrypi_id(char *buffer, int len);
+int cpuinfo_id(char *buffer, int len);
 int beagleboneblack_id(char *buffer, int len);
 
 #endif // COMMON_H

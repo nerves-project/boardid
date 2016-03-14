@@ -20,9 +20,10 @@
 
 #include "common.h"
 
-// The Raspberry Pis report their serial number via /proc/cpuinfo.
+// Read the serial number from /proc/cpuinfo.
+// The Raspberry Pi and Lego EV3 report their serial number using this mechanism.
 
-int raspberrypi_id(char *buffer, int len)
+int cpuinfo_id(char *buffer, int len)
 {
     FILE *fp = fopen_helper("/proc/cpuinfo", "r");
     if (!fp)

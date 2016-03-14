@@ -1,13 +1,13 @@
 # boardid
 [![Build Status](https://travis-ci.org/fhunleth/boardid.svg?branch=master)](https://travis-ci.org/fhunleth/boardid)
 
-This program looks up a platform-specific serial number and prints it. If
-your application needs a way identify a board, this could be it.
+This program looks up a platform-specific serial number and prints it.
 
 Supported boards:
 
   * Raspberry Pi (all varieties)
   * Beaglebone Black
+  * Lego EV3
 
 If your board isn't supported, please consider sending a pull request.
 
@@ -26,3 +26,7 @@ Options:
   -r <prefix>     Root directory prefix (used for unit tests)
   -v              Print out the program version
 ```
+
+## Example
+
+
