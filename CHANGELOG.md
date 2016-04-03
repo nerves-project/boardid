@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.0
+
+  * New features
+    * Support using eth0's MAC address as ID info
+
 ## v0.2.0
 
   * New features
