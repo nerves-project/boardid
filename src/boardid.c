@@ -33,21 +33,20 @@ struct board_id_pair {
 };
 
 static const char *cpuinfo_aliases[] = {
-    "rpi",      // Raspberry Pi (all models)
-    "ev3",      // Lego EV3
-    "cpuinfo",  // Generic /proc/cpuinfo
-    NULL
+    "rpi",      "Raspberry Pi (all models)",
+    "ev3",      "Lego EV3",
+    "cpuinfo",  "Read /proc/cpuinfo",
+    NULL,       NULL
 };
 
 static const char *bbb_aliases[] = {
-    "bbb",      // Beaglebone Black
-    "bbw",      // Beaglebone White (the original one)
-    NULL
+    "bbb",      "Beaglebone Black",
+    NULL,       NULL
 };
 
 static const char *macaddr_aliases[] = {
-    "macaddr",  // MAC Address
-    NULL
+    "macaddr",  "Read eth0's MAC address",
+    NULL,       NULL
 };
 
 static struct board_id_pair boards[] = {
@@ -72,8 +71,8 @@ static void usage()
     printf("\n");
     printf("Supported boards/methods:\n");
     for (struct board_id_pair *b = boards; b->aliases; b++) {
-        for (const char **alias = b->aliases; *alias != NULL; alias++)
-            printf("   %s\n", *alias);
+        for (const char **alias = b->aliases; *alias != NULL; alias += 2)
+            printf("  %-8s  %s\n", alias[0], alias[1]);
     }
     printf("\n");
 }
@@ -82,7 +81,7 @@ static struct board_id_pair *find_board(const char *name)
 {
     struct board_id_pair *board = boards;
     while (board->aliases) {
-        for (const char **alias = board->aliases; *alias != NULL; alias++) {
+        for (const char **alias = board->aliases; *alias != NULL; alias += 2) {
             if (strcmp(name, *alias) == 0)
                 return board;
         }

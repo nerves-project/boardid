@@ -34,6 +34,13 @@ Options:
   -n <count>        Print out count characters (least significant ones)
   -r <prefix>       Root directory prefix (used for unit tests)
   -v                Print out the program version
+
+Supported boards/methods:
+  rpi       Raspberry Pi (all models)
+  ev3       Lego EV3
+  cpuinfo   Read /proc/cpuinfo
+  bbb       Beaglebone Black
+  macaddr   Read eth0's MAC address
 ```
 
 Without the `-b` option, `boardid` will try each method of determining an ID
