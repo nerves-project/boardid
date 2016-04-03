@@ -20,6 +20,9 @@ run() {
     # Create some common directories so that scripts don't need to
     mkdir -p $WORK/proc
     mkdir -p $WORK/sys/bus/i2c/devices/0-0050/at24-0
+    mkdir -p $WORK/sys/class/net/eth0
+    mkdir -p $WORK/sys/class/net/eth1
+    mkdir -p $WORK/sys/class/net/lo0
 
     # Run the test script to setup files for the test
     source $TESTS_DIR/$TEST

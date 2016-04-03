@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#
+# MAC Address w/ 4 digits
+#
+
+cat >$WORK/sys/class/net/eth0/address <<EOF
+11:22:33:44:55:66
+EOF
+
+CMDLINE="-b macaddr -n 4"
+
+cat >$EXPECTED <<EOF
+5566
+EOF

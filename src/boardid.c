@@ -45,25 +45,32 @@ static const char *bbb_aliases[] = {
     NULL
 };
 
+static const char *macaddr_aliases[] = {
+    "macaddr",  // MAC Address
+    NULL
+};
+
 static struct board_id_pair boards[] = {
     { cpuinfo_aliases, cpuinfo_id },
     { bbb_aliases, beagleboneblack_id },
+    { macaddr_aliases, macaddr_id },
     { NULL, NULL }
 };
 
 static void usage()
 {
-    printf("boardid prints a platform-specific unique identifier.\n");
+    printf("boardid prints a platform-specific identifier.\n");
     printf("\n");
     printf("Usage: boardid [OPTION]...\n");
     printf("\n");
     printf("Options:\n");
-    printf("  -b <platform>   Use the board id method for the specified platform\n");
-    printf("  -n <count>      Print out count characters (least significant ones)\n");
-    printf("  -r <prefix>     Root directory prefix (used for unit tests)\n");
-    printf("  -v              Print out the program version\n");
+    printf("  -b <board/method> Use the specified board or detection method for\n");
+    printf("                    reading the ID.\n");
+    printf("  -n <count>        Print out count characters (least significant ones)\n");
+    printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
+    printf("  -v                Print out the program version\n");
     printf("\n");
-    printf("Supported boards:\n");
+    printf("Supported boards/methods:\n");
     for (struct board_id_pair *b = boards; b->aliases; b++) {
         for (const char **alias = b->aliases; *alias != NULL; alias++)
             printf("   %s\n", *alias);
