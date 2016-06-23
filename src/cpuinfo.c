@@ -23,7 +23,7 @@
 // Read the serial number from /proc/cpuinfo.
 // The Raspberry Pi and Lego EV3 report their serial number using this mechanism.
 
-int cpuinfo_id(char *buffer, int len)
+int cpuinfo_id(const struct id_options *options, char *buffer, int len)
 {
     FILE *fp = fopen_helper("/proc/cpuinfo", "r");
     if (!fp)

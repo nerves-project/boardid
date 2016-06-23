@@ -31,8 +31,17 @@
 
 FILE *fopen_helper(const char *filename, const char *mode);
 
-int cpuinfo_id(char *buffer, int len);
-int macaddr_id(char *buffer, int len);
-int beagleboneblack_id(char *buffer, int len);
+struct id_options
+{
+    const char *filename;
+    int offset;
+    int idlen;
+};
+
+int cpuinfo_id(const struct id_options *options, char *buffer, int len);
+int macaddr_id(const struct id_options *options, char *buffer, int len);
+int beagleboneblack_id(const struct id_options *options, char *buffer, int len);
+int linkit_id(const struct id_options *options, char *buffer, int len);
+int binfile_id(const struct id_options *options, char *buffer, int len);
 
 #endif // COMMON_H

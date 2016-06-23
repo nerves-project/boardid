@@ -21,7 +21,7 @@
 
 // Read the serial number from the Beaglebone's EEPROM
 // See the SRM
-int beagleboneblack_id(char *buffer, int len)
+int beagleboneblack_id(const struct id_options *options, char *buffer, int len)
 {
     // Try both the Linux 3.8 and 4.1 EEPROM locations
     FILE *fp = fopen_helper("/sys/bus/i2c/devices/0-0050/eeprom", "r");
@@ -53,7 +53,7 @@ int beagleboneblack_id(char *buffer, int len)
     if (len < 1)
         len = 1;
 
-    // Return the least signficant digits of the serial number
+    // Return the least significant digits of the serial number
     // if not returning all of them.
     int digits = len - 1;
     memcpy(buffer, &data[16 + (12 - digits)], digits);

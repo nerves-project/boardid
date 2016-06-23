@@ -16,6 +16,7 @@
 
 #include <getopt.h>
 #include <err.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -29,7 +30,8 @@ const char *root_prefix = "";
 
 struct board_id_pair {
     const char **aliases;
-    int (*read_id)(char *buffer, int len);
+    int (*read_id)(const struct id_options *options, char *buffer, int len);
+    bool autodetect; // true to attempt autodetection
 };
 
 static const char *cpuinfo_aliases[] = {
@@ -49,10 +51,22 @@ static const char *macaddr_aliases[] = {
     NULL,       NULL
 };
 
+static const char *binfile_aliases[] = {
+    "binfile",  "Read '-l' bytes from the file '-f' at offset '-k'",
+    NULL,       NULL
+};
+
+static const char *linkit_aliases[] = {
+    "linkit",  "LinkIt Smart (WLAN MAC address)",
+    NULL,       NULL
+};
+
 static struct board_id_pair boards[] = {
-    { cpuinfo_aliases, cpuinfo_id },
-    { bbb_aliases, beagleboneblack_id },
-    { macaddr_aliases, macaddr_id },
+    { cpuinfo_aliases, cpuinfo_id, true },
+    { bbb_aliases, beagleboneblack_id, true },
+    { macaddr_aliases, macaddr_id, true },
+    { linkit_aliases, linkit_id, true },
+    { binfile_aliases, binfile_id, false },
     { NULL, NULL }
 };
 
@@ -65,6 +79,9 @@ static void usage()
     printf("Options:\n");
     printf("  -b <board/method> Use the specified board or detection method for\n");
     printf("                    reading the ID.\n");
+    printf("  -f <path>         The file to read for the 'binfile' method\n");
+    printf("  -k <offset>       The offset in bytes for the 'binfile' method\n");
+    printf("  -l <count>        The number of bytes to read for the 'binfile' method\n");
     printf("  -n <count>        Print out count characters (least significant ones)\n");
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
     printf("  -v                Print out the program version\n");
@@ -97,12 +114,28 @@ int main(int argc, char *argv[])
     //   Auto-detect the board
     int digits = MAX_SERIALNUMBER_LEN;
     const char *name = NULL;
+    struct id_options options;
+    options.filename = "";
+    options.idlen = 0;
+    options.offset = 0;
 
     int opt;
-    while ((opt = getopt(argc, argv, "b:n:r:v")) != -1) {
+    while ((opt = getopt(argc, argv, "b:f:k:l:n:r:v")) != -1) {
         switch (opt) {
         case 'b':
             name = optarg;
+            break;
+
+        case 'f':
+            options.filename = optarg;
+            break;
+
+        case 'k':
+            options.offset = strtol(optarg, 0, 0);
+            break;
+
+        case 'l':
+            options.idlen = strtol(optarg, 0, 0);
             break;
 
         case 'n':
@@ -143,12 +176,12 @@ int main(int argc, char *argv[])
         if (board == NULL)
             errx(EXIT_FAILURE, "Unsupported board '%s'", name);
 
-        worked = board->read_id(serial_number, digits + 1);
+        worked = board->read_id(&options, serial_number, digits + 1);
     } else {
         // Try each board until one works
         struct board_id_pair *board = boards;
         while (board->read_id && !worked) {
-            worked = board->read_id(serial_number, digits + 1);
+            worked = board->read_id(&options, serial_number, digits + 1);
             board++;
         }
     }

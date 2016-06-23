@@ -25,7 +25,7 @@ static void remove_char(char *str, char c);
 // Read the MAC Address from /sys/class/net/eth0/address and use
 // it as a unique ID after removing the colons..
 
-int macaddr_id(char *buffer, int len)
+int macaddr_id(const struct id_options *options, char *buffer, int len)
 {
     FILE *fp = fopen_helper("/sys/class/net/eth0/address", "r");
     if (!fp)
