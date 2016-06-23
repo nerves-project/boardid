@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4.0
+
+  * New features
+    * LinkIt Smart 7688 support
+    * Generic support for reading a unique ID from a file
+
 ## v0.3.0
 
   * New features
