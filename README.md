@@ -11,6 +11,7 @@ Supported boards:
   * Beaglebone Black
   * Lego EV3
   * LinkIt Smart 7688
+  * Next Thing Co - C.H.I.P.
 
 If your board isn't listed above, it may be supported via one of the generic
 mechanisms:
@@ -43,6 +44,7 @@ Options:
 Supported boards/methods:
   rpi       Raspberry Pi (all models)
   ev3       Lego EV3
+  chip      Next Thing Co - C.H.I.P.
   cpuinfo   Read /proc/cpuinfo
   bbb       Beaglebone Black
   linkit    LinkIt Smart (WLAN MAC address)
