@@ -37,6 +37,7 @@ struct board_id_pair {
 static const char *cpuinfo_aliases[] = {
     "rpi",      "Raspberry Pi (all models)",
     "ev3",      "Lego EV3",
+    "chip",     "Next Thing Co - C.H.I.P.",
     "cpuinfo",  "Read /proc/cpuinfo",
     NULL,       NULL
 };

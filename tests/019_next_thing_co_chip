@@ -1,0 +1,27 @@
+#!/bin/sh
+
+#
+# Next Thing Co - C.H.I.P. w/ 4 digits
+#
+
+cat >$WORK/proc/cpuinfo <<EOF
+processor       : 0
+model name      : ARMv7 Processor rev 2 (v7l)
+BogoMIPS        : 429.72
+Features        : half thumb fastmult vfp edsp thumbee neon vfpv3 tls vfpd32
+CPU implementer : 0x41
+CPU architecture: 7
+CPU variant     : 0x3
+CPU part        : 0xc08
+CPU revision    : 2
+
+Hardware        : Allwinner sun4i/sun5i Families
+Revision        : 0000
+Serial		: 162542820440a0aa
+EOF
+
+CMDLINE="-b chip -n 4"
+
+cat >$EXPECTED <<EOF
+a0aa
+EOF
