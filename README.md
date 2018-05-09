@@ -1,4 +1,5 @@
 # boardid
+
 [![Build Status](https://travis-ci.org/fhunleth/boardid.svg?branch=master)](https://travis-ci.org/fhunleth/boardid)
 
 This program looks up a device-specific serial number and prints it. The
@@ -7,18 +8,18 @@ dynamically creating device names on a local LAN.
 
 Supported boards:
 
-  * Raspberry Pi (all varieties)
-  * Beaglebone Black
-  * Lego EV3
-  * LinkIt Smart 7688
-  * Next Thing Co - C.H.I.P.
+* Raspberry Pi (all varieties)
+* Beaglebone Black
+* Lego EV3
+* LinkIt Smart 7688
+* Next Thing Co - C.H.I.P.
 
 If your board isn't listed above, it may be supported via one of the generic
 mechanisms:
 
-  * Reading a serial number from `/proc/cpuinfo`
-  * Reading the MAC address of `eth0`
-  * Reading bytes from a file
+* Reading a serial number from `/proc/cpuinfo`
+* Reading the MAC address of `eth0`
+* Reading bytes from a file
 
 If your board isn't supported, please consider sending a pull request.
 
@@ -28,7 +29,7 @@ Run `make`. To run the unit tests, run `make check`.
 
 ## Usage
 
-```
+```text
 Usage: boardid [OPTION]...
 
 Options:
@@ -59,7 +60,7 @@ until one works.
 
 Here's an example run on a Lego Mindstorms EV3 brick running ev3dev:
 
-```
+```sh
 robot@ev3dev:~$ boardid
 00000016534b129d
 robot@ev3dev:~$
@@ -69,6 +70,6 @@ robot@ev3dev:~$
 
 This utility doesn't provide any assurance of the uniqueness of returned IDs. It
 is not unheard of for board manufacturers to accidentally reuse IDs or forget to
-program them entirely. Additionally, these IDs may even be guessible so
-using them in a cryptographic sense is not advised without an understanding for
-how they're assigned.
+program them entirely. Additionally, these IDs may even be guessible so using
+them in a cryptographic sense is not advised without an understanding for how
+they're assigned.
