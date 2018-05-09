@@ -32,7 +32,7 @@ int binfile_id(const struct id_options *options, char *buffer, int len)
         return 0;
     }
 
-    int idlen = options->idlen;
+    int idlen = options->size;
     if (idlen > MAX_BINFILE_ID_LEN)
         idlen = MAX_BINFILE_ID_LEN;
     unsigned char data[MAX_BINFILE_ID_LEN];
@@ -64,7 +64,7 @@ int linkit_id(const struct id_options *options, char *buffer, int len)
     // Use the LinkIt Smart's WLAN MAC address for the unique ID.
     struct id_options linkit_options;
     linkit_options.filename = "/dev/mtdblock2";
-    linkit_options.idlen = 6;
+    linkit_options.size = 6;
     linkit_options.offset = 0x4;
 
     return binfile_id(&linkit_options, buffer, len);

@@ -62,12 +62,18 @@ static const char *linkit_aliases[] = {
     NULL,       NULL
 };
 
+static const char *uboot_env_aliases[] = {
+    "uboot_env",  "Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the variable '-u'",
+    NULL,       NULL
+};
+
 static struct board_id_pair boards[] = {
     { cpuinfo_aliases, cpuinfo_id, true },
     { bbb_aliases, beagleboneblack_id, true },
     { macaddr_aliases, macaddr_id, true },
     { linkit_aliases, linkit_id, true },
     { binfile_aliases, binfile_id, false },
+    { uboot_env_aliases, uboot_env_id, false},
     { NULL, NULL }
 };
 
@@ -80,9 +86,10 @@ static void usage()
     printf("Options:\n");
     printf("  -b <board/method> Use the specified board or detection method for\n");
     printf("                    reading the ID.\n");
-    printf("  -f <path>         The file to read for the 'binfile' method\n");
-    printf("  -k <offset>       The offset in bytes for the 'binfile' method\n");
-    printf("  -l <count>        The number of bytes to read for the 'binfile' method\n");
+    printf("  -f <path>         The file to read for the 'binfile'/'uenv' methods\n");
+    printf("  -k <offset>       The offset in bytes for the 'binfile'/`uenv' methods\n");
+    printf("  -l <count>        The number of bytes to read for the 'binfile'/'uenv' methods\n");
+    printf("  -u <varname>      U-boot environment variable name for the 'uenv' method\n");
     printf("  -n <count>        Print out count characters (least significant ones)\n");
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
     printf("  -v                Print out the program version\n");
@@ -90,7 +97,7 @@ static void usage()
     printf("Supported boards/methods:\n");
     for (struct board_id_pair *b = boards; b->aliases; b++) {
         for (const char **alias = b->aliases; *alias != NULL; alias += 2)
-            printf("  %-8s  %s\n", alias[0], alias[1]);
+            printf("  %-9s  %s\n", alias[0], alias[1]);
     }
     printf("\n");
 }
@@ -117,11 +124,12 @@ int main(int argc, char *argv[])
     const char *name = NULL;
     struct id_options options;
     options.filename = "";
-    options.idlen = 0;
+    options.size = 0;
     options.offset = 0;
+    options.uenv_varname = "";
 
     int opt;
-    while ((opt = getopt(argc, argv, "b:f:k:l:n:r:v")) != -1) {
+    while ((opt = getopt(argc, argv, "b:f:k:l:n:r:vu:")) != -1) {
         switch (opt) {
         case 'b':
             name = optarg;
@@ -136,7 +144,7 @@ int main(int argc, char *argv[])
             break;
 
         case 'l':
-            options.idlen = strtol(optarg, 0, 0);
+            options.size = strtol(optarg, 0, 0);
             break;
 
         case 'n':
@@ -150,6 +158,10 @@ int main(int argc, char *argv[])
         case 'v':
             printf("%s\n", PROGRAM_VERSION_STR);
             exit(EXIT_SUCCESS);
+            break;
+
+        case 'u':
+            options.uenv_varname = optarg;
             break;
 
         default:

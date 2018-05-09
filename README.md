@@ -35,26 +35,28 @@ Usage: boardid [OPTION]...
 Options:
   -b <board/method> Use the specified board or detection method for
                     reading the ID.
-  -f <path>         The file to read for the 'binfile' method
-  -k <offset>       The offset in bytes for the 'binfile' method
-  -l <count>        The number of bytes to read for the 'binfile' method
+  -f <path>         The file to read for the 'binfile'/'uenv' methods
+  -k <offset>       The offset in bytes for the 'binfile'/`uenv' methods
+  -l <count>        The number of bytes to read for the 'binfile'/'uenv' methods
+  -u <varname>      U-boot environment variable name for the 'uenv' method
   -n <count>        Print out count characters (least significant ones)
   -r <prefix>       Root directory prefix (used for unit tests)
   -v                Print out the program version
 
 Supported boards/methods:
-  rpi       Raspberry Pi (all models)
-  ev3       Lego EV3
-  chip      Next Thing Co - C.H.I.P.
-  cpuinfo   Read /proc/cpuinfo
-  bbb       Beaglebone Black
-  linkit    LinkIt Smart (WLAN MAC address)
-  macaddr   Read eth0's MAC address
-  binfile   Read '-l' bytes from the file '-f' at offset '-k'
+  rpi        Raspberry Pi (all models)
+  ev3        Lego EV3
+  chip       Next Thing Co - C.H.I.P.
+  cpuinfo    Read /proc/cpuinfo
+  bbb        Beaglebone Black
+  macaddr    Read eth0's MAC address
+  linkit     LinkIt Smart (WLAN MAC address)
+  binfile    Read '-l' bytes from the file '-f' at offset '-k'
+  uboot_env  Read a U-Boot environment (file '-f', offset '-k', length '-l') and
+             use the variable '-u'
 ```
 
-Without the `-b` option, `boardid` will try each method of determining an ID
-until one works.
+Without the `-b` option, `boardid` will try a few methods of determining an ID.
 
 ## Example
 

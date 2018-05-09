@@ -2,7 +2,38 @@
 
 set -e
 
-TESTS_DIR=$(dirname $(readlink -f $0))
+export LC_ALL=C
+
+# Linux command line tools that may be different on other OSes
+READLINK=readlink
+BASE64_DECODE=-d
+
+if [ -d "/mnt/c/Users" ]; then
+    # Windows 10 bash mode
+    HOST_OS=Windows
+    HOST_ARCH=amd64
+else
+    HOST_OS=$(uname -s)
+    HOST_ARCH=$(uname -m)
+fi
+
+case "$HOST_OS" in
+    Darwin)
+        # Not -d?
+        BASE64_DECODE=-D
+
+        READLINK=/usr/local/bin/greadlink
+        [ -e $READLINK ] || ( echo "Please run 'brew install coreutils' to install greadlink"; exit 1 )
+        ;;
+    *)
+        ;;
+esac
+
+base64_decode() {
+    base64 $BASE64_DECODE
+}
+
+TESTS_DIR=$(dirname $($READLINK -f $0))
 
 WORK=$TESTS_DIR/work
 BOARDID=$TESTS_DIR/../boardid
