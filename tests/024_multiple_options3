@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#
+# Check that if two strategies fail that we get the right number of zeros.
+#
+
+CMDLINE="-b uboot_env -n 24 -f /dev/mmcblock0 -l 8192 -u serial_number -k 0 -b macaddr -n 4"
+
+cat >$EXPECTED <<EOF
+0000
+EOF

@@ -35,6 +35,8 @@ FILE *fopen_helper(const char *filename, const char *mode);
 struct id_options
 {
     const char *name;
+    int digits; // how many digits of the serial number to return
+
     const char *filename;
     int offset;
     int size;

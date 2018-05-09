@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     // Defaults:
     //   Print all digits in the id
     //   Auto-detect the board
-    int digits = MAX_SERIALNUMBER_LEN;
+    int default_digits = MAX_SERIALNUMBER_LEN;
     struct id_options options[MAX_STRATEGIES_TO_TRY];
     memset(options, 0, sizeof(options));
     int current_set = -1;
@@ -136,6 +136,8 @@ int main(int argc, char *argv[])
                 errx(EXIT_FAILURE, "Too many '-b' options");
 
             options[current_set].name = optarg;
+            options[current_set].digits = default_digits;
+
             break;
 
         case 'f':
@@ -157,8 +159,19 @@ int main(int argc, char *argv[])
             break;
 
         case 'n':
-            digits = strtol(optarg, 0, 0);
+        {
+            int digits = strtol(optarg, 0, 0);
+            if (digits < 1)
+                digits = 1;
+            else if (digits > MAX_SERIALNUMBER_LEN)
+                digits = MAX_SERIALNUMBER_LEN;
+
+            if (current_set < 0)
+                default_digits = digits;
+            else
+                options[current_set].digits = digits;
             break;
+        }
 
         case 'r':
             root_prefix = optarg;
@@ -184,13 +197,15 @@ int main(int argc, char *argv[])
 
     if (optind < argc) {
         // Support deprecated mode of passing the digit count via a positional argument
-        digits = strtol(argv[optind], 0, 0);
-    }
+        default_digits = strtol(argv[optind], 0, 0);
+        if (default_digits < 1)
+            default_digits = 1;
+        else if (default_digits > MAX_SERIALNUMBER_LEN)
+            default_digits = MAX_SERIALNUMBER_LEN;
 
-    if (digits < 1)
-        digits = 1;
-    else if (digits > MAX_SERIALNUMBER_LEN)
-        digits = MAX_SERIALNUMBER_LEN;
+        if (current_set >= 0)
+            options[current_set].digits = default_digits;
+    }
 
     char serial_number[MAX_SERIALNUMBER_LEN + 1];
     int worked = 0;
@@ -201,13 +216,13 @@ int main(int argc, char *argv[])
             if (board == NULL)
                 errx(EXIT_FAILURE, "Unsupported strategy '%s'", options[i].name);
 
-            worked = board->read_id(&options[i], serial_number, digits + 1);
+            worked = board->read_id(&options[i], serial_number, options[i].digits + 1);
         }
     } else {
         // Try each board until one works
         struct board_id_pair *board = boards;
         while (board->read_id && !worked) {
-            worked = board->read_id(&options[0], serial_number, digits + 1);
+            worked = board->read_id(&options[0], serial_number, default_digits + 1);
             board++;
         }
     }
@@ -217,7 +232,8 @@ int main(int argc, char *argv[])
         printf("%s\n", serial_number);
     } else {
         // Failure: print all zeros
-        for (int i = 0; i < digits; i++)
+        int to_print = (current_set >= 0) ? options[current_set].digits : default_digits;
+        for (int i = 0; i < to_print; i++)
             printf("0");
         printf("\n");
     }
