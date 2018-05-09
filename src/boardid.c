@@ -94,6 +94,8 @@ static void usage()
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
     printf("  -v                Print out the program version\n");
     printf("\n");
+    printf("'-b' can be specified multiple times to try more than one method.\n");
+    printf("\n");
     printf("Supported boards/methods:\n");
     for (struct board_id_pair *b = boards; b->aliases; b++) {
         for (const char **alias = b->aliases; *alias != NULL; alias += 2)
@@ -121,30 +123,37 @@ int main(int argc, char *argv[])
     //   Print all digits in the id
     //   Auto-detect the board
     int digits = MAX_SERIALNUMBER_LEN;
-    const char *name = NULL;
-    struct id_options options;
-    options.filename = "";
-    options.size = 0;
-    options.offset = 0;
-    options.uenv_varname = "";
+    struct id_options options[MAX_STRATEGIES_TO_TRY];
+    memset(options, 0, sizeof(options));
+    int current_set = -1;
 
     int opt;
     while ((opt = getopt(argc, argv, "b:f:k:l:n:r:vu:")) != -1) {
         switch (opt) {
         case 'b':
-            name = optarg;
+            current_set++;
+            if (current_set >= MAX_STRATEGIES_TO_TRY)
+                errx(EXIT_FAILURE, "Too many '-b' options");
+
+            options[current_set].name = optarg;
             break;
 
         case 'f':
-            options.filename = optarg;
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].filename = optarg;
             break;
 
         case 'k':
-            options.offset = strtol(optarg, 0, 0);
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].offset = strtol(optarg, 0, 0);
             break;
 
         case 'l':
-            options.size = strtol(optarg, 0, 0);
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].size = strtol(optarg, 0, 0);
             break;
 
         case 'n':
@@ -161,7 +170,9 @@ int main(int argc, char *argv[])
             break;
 
         case 'u':
-            options.uenv_varname = optarg;
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].uenv_varname = optarg;
             break;
 
         default:
@@ -183,18 +194,20 @@ int main(int argc, char *argv[])
 
     char serial_number[MAX_SERIALNUMBER_LEN + 1];
     int worked = 0;
-    if (name) {
-        // Only check using the strategy for the specified board
-        struct board_id_pair *board = find_board(name);
-        if (board == NULL)
-            errx(EXIT_FAILURE, "Unsupported board '%s'", name);
+    if (current_set >= 0) {
+        // Check using user-specified strategies
+        for (int i = 0; i <= current_set && !worked; i++) {
+            struct board_id_pair *board = find_board(options[i].name);
+            if (board == NULL)
+                errx(EXIT_FAILURE, "Unsupported strategy '%s'", options[i].name);
 
-        worked = board->read_id(&options, serial_number, digits + 1);
+            worked = board->read_id(&options[i], serial_number, digits + 1);
+        }
     } else {
         // Try each board until one works
         struct board_id_pair *board = boards;
         while (board->read_id && !worked) {
-            worked = board->read_id(&options, serial_number, digits + 1);
+            worked = board->read_id(&options[0], serial_number, digits + 1);
             board++;
         }
     }

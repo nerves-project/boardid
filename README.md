@@ -43,6 +43,8 @@ Options:
   -r <prefix>       Root directory prefix (used for unit tests)
   -v                Print out the program version
 
+'-b' can be specified multiple times to try more than one method.
+
 Supported boards/methods:
   rpi        Raspberry Pi (all models)
   ev3        Lego EV3

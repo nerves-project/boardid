@@ -20,6 +20,7 @@
 #include <stdio.h>
 
 #define MAX_SERIALNUMBER_LEN  32
+#define MAX_STRATEGIES_TO_TRY 8
 
 #ifndef PROGRAM_VERSION
 #define PROGRAM_VERSION unknown
@@ -33,6 +34,7 @@ FILE *fopen_helper(const char *filename, const char *mode);
 
 struct id_options
 {
+    const char *name;
     const char *filename;
     int offset;
     int size;
