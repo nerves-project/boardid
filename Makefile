@@ -1,5 +1,5 @@
 
-VERSION=0.5.0
+VERSION=1.0.0
 
 boardid: $(wildcard src/*.c)
 	$(CC) -std=c99 -Wall -O2 -DPROGRAM_VERSION=$(VERSION) -o $@ $^

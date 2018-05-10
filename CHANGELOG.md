@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.5.0
+## v1.0.0
 
 * New features
   * Support reading serial numbers from U-boot environment variables
