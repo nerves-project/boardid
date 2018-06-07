@@ -26,7 +26,7 @@
 
 // The root prefix is used for unit testing so that simulated /proc or /sys
 // files can be used.
-const char *root_prefix = "";
+const char *root_prefix = NULL;
 
 struct board_id_pair {
     const char **aliases;

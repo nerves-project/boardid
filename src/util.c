@@ -22,12 +22,15 @@ extern const char *root_prefix;
 
 FILE *fopen_helper(const char *filename, const char *mode)
 {
-    int prefix_len = strlen(root_prefix);
-    if (prefix_len == 0) {
+    if (filename == NULL || mode == NULL)
+        return NULL;
+
+    if (root_prefix == NULL) {
         // Normal case
         return fopen(filename, mode);
     } else {
         // Unit test case
+        int prefix_len = strlen(root_prefix);
         int len = strlen(filename) + prefix_len + 1;
         char path[len];
         memcpy(path, root_prefix, prefix_len);
