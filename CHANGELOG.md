@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.0
+
+* New feature
+  * Read U-boot environment location from `/etc/fw_env.config`. This makes keeps
+    the U-boot environment info in one place.
+
 ## v1.0.0
 
 * New features
