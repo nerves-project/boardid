@@ -85,28 +85,68 @@ static int uboot_env_read(const char *uenv, size_t size, const char *varname, ch
     return 0;
 }
 
+static void find_uboot_env(const struct id_options *options, char *filename, int *offset, int *size)
+{
+    // Default to the input options
+    *offset = options->offset;
+    *size = options->size;
+    *filename = '\0';
+
+    // If the user specified a filename then use it
+    if (options->filename) {
+        strcpy(filename, options->filename);
+        return;
+    }
+
+    // Try to read the options from '/etc/fw_env.config'
+    FILE *fp = fopen_helper("/etc/fw_env.config", "r");
+    if (!fp)
+        return;
+
+    while (!feof(fp)) {
+        // fw_env.conf has comments, whitespace and lines like follows:
+        // # Device name   Device offset   Env. size       Flash sector size       Number of sectors
+        // /dev/mmcblk0    0x000000        0x2000          0x200                   16
+
+        int sector_size;
+        int num_sectors;
+        int num = fscanf(fp, "%255s %i %i %i %i", filename, offset, size, &sector_size, &num_sectors);
+
+        // Check for a match that's not a comment
+        if (num == 5 && filename[0] != '#')
+            break;
+    }
+    fclose(fp);
+}
+
 int uboot_env_id(const struct id_options *options, char *buffer, int len)
 {
+    char filename[256];
+    int offset;
+    int size;
     int rc = 0;
-    FILE *fp = fopen_helper(options->filename, "rb");
+
+    find_uboot_env(options, filename, &offset, &size);
+
+    FILE *fp = fopen_helper(filename, "rb");
     if (!fp)
         return 0;
 
-    char *uenv = malloc(options->size);
+    char *uenv = malloc(size);
     if (!uenv)
         goto cleanup;
 
-    if (fseek(fp, options->offset, SEEK_SET) < 0) {
-        warn("seek failed on %s", options->filename);
+    if (fseek(fp, offset, SEEK_SET) < 0) {
+        warn("seek failed on %s", filename);
         goto cleanup;
     }
 
-    if (fread(uenv, 1, options->size, fp) != options->size) {
-        warn("fread failed on %s", options->filename);
+    if (fread(uenv, 1, size, fp) != size) {
+        warn("fread failed on %s", filename);
         goto cleanup;
     }
 
-    rc = uboot_env_read(uenv, options->size, options->uenv_varname, buffer, len);
+    rc = uboot_env_read(uenv, size, options->uenv_varname, buffer, len);
 
 cleanup:
     if (uenv)

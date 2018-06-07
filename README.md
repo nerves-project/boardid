@@ -54,8 +54,8 @@ Supported boards/methods:
   macaddr    Read eth0's MAC address
   linkit     LinkIt Smart (WLAN MAC address)
   binfile    Read '-l' bytes from the file '-f' at offset '-k'
-  uboot_env  Read a U-Boot environment (file '-f', offset '-k', length '-l') and
-             use the variable '-u'
+  uboot_env  Read a U-Boot environment (use `/etc/fw_env.config` or specify
+             file '-f', offset '-k', length '-l') and use the variable '-u'
 ```
 
 Without the `-b` option, `boardid` will try a few methods of determining an ID.

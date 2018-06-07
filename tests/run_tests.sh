@@ -52,6 +52,7 @@ run() {
     rm -fr $WORK
     # Create some common directories so that scripts don't need to
     mkdir -p $WORK/dev
+    mkdir -p $WORK/etc
     mkdir -p $WORK/proc
     mkdir -p $WORK/sys/bus/i2c/devices/0-0050/at24-0
     mkdir -p $WORK/sys/class/net/eth0
