@@ -20,6 +20,7 @@ mechanisms:
 * Reading a serial number from `/proc/cpuinfo`
 * Reading the MAC address of `eth0`
 * Reading bytes from a file
+* Reading a key from the U-Boot environment
 
 If your board isn't supported, please consider sending a pull request.
 
