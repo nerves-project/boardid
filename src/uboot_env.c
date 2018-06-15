@@ -148,6 +148,10 @@ int uboot_env_id(const struct id_options *options, char *buffer, int len)
 
     rc = uboot_env_read(uenv, size, options->uenv_varname, buffer, len);
 
+    // Check for empty string
+    if (rc && buffer[0] == '\0')
+        rc = 0;
+
 cleanup:
     if (uenv)
         free(uenv);
