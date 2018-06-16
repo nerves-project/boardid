@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.1
+
+* Bug fix
+  * Ignore empty U-Boot environment variables. I.e. "serial_number=" is treated
+    the same as it not being listed as all.
+
 ## v1.1.0
 
 * New feature
