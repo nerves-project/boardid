@@ -67,6 +67,11 @@ static const char *uboot_env_aliases[] = {
     NULL,       NULL
 };
 
+static const char *atecc508a_aliases[] = {
+    "atecc508a",  "Read an ATECC508A (I2C device '-f')",
+    NULL,       NULL
+};
+
 static struct board_id_pair boards[] = {
     { cpuinfo_aliases, cpuinfo_id, true },
     { bbb_aliases, beagleboneblack_id, true },
@@ -74,6 +79,7 @@ static struct board_id_pair boards[] = {
     { linkit_aliases, linkit_id, true },
     { binfile_aliases, binfile_id, false },
     { uboot_env_aliases, uboot_env_id, false},
+    { atecc508a_aliases, atecc508a_id, false },
     { NULL, NULL }
 };
 

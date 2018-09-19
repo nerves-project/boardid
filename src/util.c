@@ -18,8 +18,6 @@
 
 #include "common.h"
 
-extern const char *root_prefix;
-
 FILE *fopen_helper(const char *filename, const char *mode)
 {
     if (filename == NULL || mode == NULL)
@@ -38,3 +36,10 @@ FILE *fopen_helper(const char *filename, const char *mode)
         return fopen(path, mode);
     }
 }
+
+void bin_to_hex(const uint8_t *input, size_t len, char *output)
+{
+    for (size_t i = 0; i < len; i++)
+        sprintf(&output[i * 2], "%02x", input[i]);
+}
+

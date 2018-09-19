@@ -21,6 +21,7 @@ mechanisms:
 * Reading the MAC address of `eth0`
 * Reading bytes from a file
 * Reading a key from the U-Boot environment
+* Reading an ATECC508A via an I2C bus
 
 If your board isn't supported, please consider sending a pull request.
 
@@ -57,6 +58,7 @@ Supported boards/methods:
   binfile    Read '-l' bytes from the file '-f' at offset '-k'
   uboot_env  Read a U-Boot environment (use `/etc/fw_env.config` or specify
              file '-f', offset '-k', length '-l') and use the variable '-u'
+  atecc508a  Read an ATECC508A (I2C device '-f')
 ```
 
 Without the `-b` option, `boardid` will try a few methods of determining an ID.
@@ -75,6 +77,6 @@ robot@ev3dev:~$
 
 This utility doesn't provide any assurance of the uniqueness of returned IDs. It
 is not unheard of for board manufacturers to accidentally reuse IDs or forget to
-program them entirely. Additionally, these IDs may even be guessible so using
+program them entirely. Additionally, these IDs may even be guessable so using
 them in a cryptographic sense is not advised without an understanding for how
 they're assigned.

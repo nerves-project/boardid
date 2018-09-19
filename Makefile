@@ -2,7 +2,7 @@
 VERSION=1.1.1
 
 boardid: $(wildcard src/*.c)
-	$(CC) -std=c99 -Wall -O2 -DPROGRAM_VERSION=$(VERSION) -o $@ $^
+	$(CC) -Wall -O2 -DPROGRAM_VERSION=$(VERSION) -o $@ $^
 
 check: boardid
 	tests/run_tests.sh

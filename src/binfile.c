@@ -35,7 +35,7 @@ int binfile_id(const struct id_options *options, char *buffer, int len)
     int idlen = options->size;
     if (idlen > MAX_BINFILE_ID_LEN)
         idlen = MAX_BINFILE_ID_LEN;
-    unsigned char data[MAX_BINFILE_ID_LEN];
+    uint8_t data[MAX_BINFILE_ID_LEN];
 
     if (fread(data, 1, idlen, fp) != idlen) {
         fclose(fp);
@@ -45,8 +45,7 @@ int binfile_id(const struct id_options *options, char *buffer, int len)
     fclose(fp);
 
     char hexdata[MAX_BINFILE_ID_LEN * 2 + 1];
-    for (int i = 0; i < idlen; i++)
-        sprintf(&hexdata[i * 2], "%02x", data[i]);
+    bin_to_hex(data, idlen, hexdata);
 
     // Return the least significant digits of the serial number
     // if not returning all of them.

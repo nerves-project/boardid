@@ -18,6 +18,7 @@
 #define COMMON_H
 
 #include <stdio.h>
+#include <stdint.h>
 
 #define MAX_SERIALNUMBER_LEN  32
 #define MAX_STRATEGIES_TO_TRY 8
@@ -31,6 +32,7 @@
 #define PROGRAM_VERSION_STR xstr(PROGRAM_VERSION)
 
 FILE *fopen_helper(const char *filename, const char *mode);
+void bin_to_hex(const uint8_t *input, size_t len, char *output);
 
 struct id_options
 {
@@ -49,5 +51,10 @@ int beagleboneblack_id(const struct id_options *options, char *buffer, int len);
 int linkit_id(const struct id_options *options, char *buffer, int len);
 int binfile_id(const struct id_options *options, char *buffer, int len);
 int uboot_env_id(const struct id_options *options, char *buffer, int len);
+int atecc508a_id(const struct id_options *options, char *buffer, int len);
+
+// The root prefix is used for unit testing so that simulated /proc or /sys
+// files can be used.
+extern const char *root_prefix;
 
 #endif // COMMON_H
