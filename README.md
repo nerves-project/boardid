@@ -1,6 +1,6 @@
 # boardid
 
-[![Build Status](https://travis-ci.org/fhunleth/boardid.svg?branch=master)](https://travis-ci.org/fhunleth/boardid)
+[![CircleCI](https://circleci.com/gh/fhunleth/boardid.svg?style=svg)](https://circleci.com/gh/fhunleth/boardid)
 
 This program looks up a device-specific serial number and prints it. The
 original use was to provide some non-changing and unique material for
