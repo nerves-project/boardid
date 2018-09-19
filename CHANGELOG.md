@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.2.0
+
+* New feature
+  * Add support for reading serial numbers from ATECC508A CrytoAuthentication
+    Devices.
+
 ## v1.1.1
 
 * Bug fix
