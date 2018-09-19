@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     int current_set = -1;
 
     int opt;
-    while ((opt = getopt(argc, argv, "b:f:k:l:n:r:vu:")) != -1) {
+    while ((opt = getopt(argc, argv, "b:f:k:l:n:r:vu:?")) != -1) {
         switch (opt) {
         case 'b':
             current_set++;
@@ -188,6 +188,7 @@ int main(int argc, char *argv[])
             options[current_set].uenv_varname = optarg;
             break;
 
+        case '?':
         default:
             usage();
             exit(EXIT_FAILURE);
