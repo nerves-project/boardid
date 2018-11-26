@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#
+# Force an ID
+#
+
+CMDLINE="-b force -f 0123456789"
+
+cat >$EXPECTED <<EOF
+0123456789
+EOF

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#
+# Force an ID and truncate it to 4 digits
+#
+
+CMDLINE="-b force -f 0123456789 -n 4"
+
+cat >$EXPECTED <<EOF
+0123
+EOF

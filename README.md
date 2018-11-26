@@ -59,6 +59,7 @@ Supported boards/methods:
   uboot_env  Read a U-Boot environment (use `/etc/fw_env.config` or specify
              file '-f', offset '-k', length '-l') and use the variable '-u'
   atecc508a  Read an ATECC508A (I2C device '-f')
+  force      Force an ID (specify the ID with '-f')
 ```
 
 Without the `-b` option, `boardid` will try a few methods of determining an ID.
