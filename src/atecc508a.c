@@ -179,17 +179,33 @@ static int atecc508a_read_zone(int fd, uint8_t zone, uint16_t slot, uint8_t bloc
     if (i2c_transfer(fd, ATECC508A_ADDR, NULL, 0, response, len + 3) < 0)
         return -1;
 
-    memcpy(data, response, len);
+    // Check length
+    if (response[0] != len + 3)
+        return -1;
+
+    // Check the CRC
+    uint8_t got_crc[2];
+    got_crc[0] = response[len + 1];
+    got_crc[1] = response[len + 2];
+    atecc508a_crc(response);
+    if (got_crc[0] != response[len + 1] || got_crc[1] != response[len + 2])
+        return -1;
+
+    // Copy the data (bytes after the count field)
+    memcpy(data, &response[1], len);
 
     return 0;
 }
 
 static int atecc508a_read_serial(int fd, uint8_t *serial_number)
 {
+    // Read the config -> try 2 times just in case there's a hiccup on the I2C bus
     uint8_t buffer[32];
-    if (atecc508a_read_zone(fd, ATECC508A_ZONE_CONFIG, 0, 0, 0, buffer, 32) < 0)
+    if (atecc508a_read_zone(fd, ATECC508A_ZONE_CONFIG, 0, 0, 0, buffer, 32) < 0 &&
+        atecc508a_read_zone(fd, ATECC508A_ZONE_CONFIG, 0, 0, 0, buffer, 32) < 0)
         return -1;
 
+    // Copy out the serial number (see datasheet for offsets)
     memcpy(&serial_number[0], &buffer[0], 4);
     memcpy(&serial_number[4], &buffer[8], 5);
     return 0;
