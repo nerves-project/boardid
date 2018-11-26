@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.3.0
+
+* New feature
+  * Add fallback option when an ID can't be found anywhere (-b force)
+
+* Bug fixes
+  * Fix an off-by-one error when reading the serial number on the ATECC508A
+  * Check CRC and add a retry for ATECC508A communication
+
 ## v1.2.0
 
 * New feature
