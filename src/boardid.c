@@ -192,7 +192,6 @@ int main(int argc, char *argv[])
         case 'v':
             printf("%s\n", PROGRAM_VERSION_STR);
             exit(EXIT_SUCCESS);
-            break;
 
         case 'u':
             if (current_set < 0)
@@ -204,7 +203,6 @@ int main(int argc, char *argv[])
         default:
             usage();
             exit(EXIT_FAILURE);
-            break;
         }
     }
 
