@@ -28,13 +28,10 @@
 #include <sys/stat.h>
 
 #include "common.h"
+#include "atecc508a.h"
 
 #define ATECC508A_ADDR 0x60
 #define ATECC508A_WAKE_DELAY_US 1500
-
-#define ATECC508A_ZONE_CONFIG 0
-#define ATECC508A_ZONE_OTP    1
-#define ATECC508A_ZONE_DATA   2
 
 static int microsleep(int microseconds)
 {
@@ -72,7 +69,18 @@ static int i2c_transfer(int fd,
     return ioctl(fd, I2C_RDWR, &data);
 }
 
-static int atecc508a_wakeup(int fd)
+
+int atecc508a_open(const char *filename)
+{
+    return open(filename, O_RDWR);
+}
+
+void atecc508a_close(int fd)
+{
+    close(fd);
+}
+
+int atecc508a_wakeup(int fd)
 {
     // See ATECC508A 6.1 for the wakeup sequence.
     //
@@ -99,7 +107,7 @@ static int atecc508a_wakeup(int fd)
     return 0;
 }
 
-static int atecc508a_sleep(int fd)
+int atecc508a_sleep(int fd)
 {
     // See ATECC508A 6.2 for the sleep sequence.
     uint8_t sleep = 0x01;
@@ -151,7 +159,7 @@ static void atecc508a_crc(uint8_t *data)
     crc_le[1] = (uint8_t)(crc_register >> 8);
 }
 
-static int atecc508a_read_zone(int fd, uint8_t zone, uint16_t slot, uint8_t block, uint8_t offset, uint8_t *data, uint8_t len)
+int atecc508a_read_zone(int fd, uint8_t zone, uint16_t slot, uint8_t block, uint8_t offset, uint8_t *data, uint8_t len)
 {
     uint16_t addr;
 
@@ -197,7 +205,7 @@ static int atecc508a_read_zone(int fd, uint8_t zone, uint16_t slot, uint8_t bloc
     return 0;
 }
 
-static int atecc508a_read_serial(int fd, uint8_t *serial_number)
+int atecc508a_read_serial(int fd, uint8_t *serial_number)
 {
     // Read the config -> try 2 times just in case there's a hiccup on the I2C bus
     uint8_t buffer[32];
@@ -211,40 +219,3 @@ static int atecc508a_read_serial(int fd, uint8_t *serial_number)
     return 0;
 }
 
-// Read the serial number from the Beaglebone's EEPROM
-// See the SRM
-int atecc508a_id(const struct id_options *options, char *buffer, int len)
-{
-    int fd = open(options->filename, O_RDWR);
-    if (fd < 0)
-        return 0;
-
-    if (atecc508a_wakeup(fd) < 0) {
-        close(fd);
-        return 0;
-    }
-
-    uint8_t serial_number[9];
-    if (atecc508a_read_serial(fd, serial_number) < 0) {
-        close(fd);
-        return 0;
-    }
-
-    atecc508a_sleep(fd);
-
-    close(fd);
-
-    char serial_number_hex[sizeof(serial_number) * 2 + 1];
-    bin_to_hex(serial_number, sizeof(serial_number), serial_number_hex);
-
-    // The ATECC508A has a 18 character serial number (9 bytes)
-    if (len > sizeof(serial_number_hex))
-        len = sizeof(serial_number_hex);
-    if (len < 1)
-        len = 1;
-
-    int digits = len - 1;
-    memcpy(buffer, serial_number_hex, digits);
-    buffer[digits] = 0;
-    return 1;
-}

@@ -72,6 +72,11 @@ static const char *atecc508a_aliases[] = {
     NULL,       NULL
 };
 
+static const char *nerves_key_aliases[] = {
+    "nerves_key",  "Read a NervesKey (I2C device '-f')",
+    NULL,       NULL
+};
+
 static const char *force_aliases[] = {
     "force",  "Force the ID (Specify ID with '-f')",
     NULL,       NULL
@@ -85,6 +90,7 @@ static struct board_id_pair boards[] = {
     { binfile_aliases, binfile_id, false },
     { uboot_env_aliases, uboot_env_id, false},
     { atecc508a_aliases, atecc508a_id, false },
+    { nerves_key_aliases, nerves_key_id, false },
     { force_aliases, force_id, false },
     { NULL, NULL }
 };
