@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.4.0
+
+* New feature
+  * Support reading serial numbers from a NervesKey
+
 ## v1.3.0
 
 * New feature
