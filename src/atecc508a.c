@@ -27,7 +27,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "common.h"
 #include "atecc508a.h"
 
 #define ATECC508A_ADDR 0x60
