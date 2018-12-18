@@ -9,9 +9,9 @@ dynamically creating device names on a local LAN.
 Supported boards:
 
 * Raspberry Pi (all varieties)
-* Beaglebone Black
-* Lego EV3
-* LinkIt Smart 7688
+* [BeagleBone Black (all varieties)](http://beagleboard.org/)
+* [Lego EV3](https://www.ev3dev.org/)
+* [LinkIt Smart 7688](https://www.seeedstudio.com/LinkIt-Smart-7688-p-2573.html)
 * Next Thing Co - C.H.I.P.
 
 If your board isn't listed above, it may be supported via one of the generic
