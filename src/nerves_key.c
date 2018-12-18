@@ -20,8 +20,8 @@ int nerves_key_id(const struct id_options *options, char *buffer, int len)
 
     // The Nerves Key's serial number is in the OTP memory
     uint8_t otp[32];
-    if (atecc508a_read_zone(fd, ATECC508A_ZONE_OTP, 0, 0, 0, otp, 32) < 0 &&
-        atecc508a_read_zone(fd, ATECC508A_ZONE_OTP, 0, 0, 0, otp, 32) < 0)
+    if (atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_OTP, 0, 0, 0, otp, 32) < 0 &&
+        atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_OTP, 0, 0, 0, otp, 32) < 0)
         return -1;
 
     atecc508a_sleep(fd);
