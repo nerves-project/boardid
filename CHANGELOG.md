@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.5.0
+
+* New features
+  * Support reading options from `/etc/boardid.config`. If the file exists,
+    options are read from it. The commandline still takes precedence.
+
+* Bug fixes
+  * Merge back ATECC508A improvements from the nerves_key_pkcs11 work
+
 ## v1.4.0
 
 * New feature
