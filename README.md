@@ -76,6 +76,29 @@ robot@ev3dev:~$ boardid
 robot@ev3dev:~$
 ```
 
+## Config file
+
+It's possible to come up with fairly long and complicated commandlines for some
+devices. `boardid` supports reading arguments from `/etc/boardid.config` so that
+you need not duplicate the commandline arguments everywhere `boardid` is used.
+A config file can have comments. Here's an example:
+
+```txt
+# /etc/boardid.config
+
+# Try the nerves_serial_number environment variable first
+-b uboot_env -u nerves_serial_number
+
+# Try the legacy serial_number environment variable
+-b uboot_env -u serial_number
+
+# Check the EEPROM for a serial number (BBB and BBG)
+-b bbb -n 4
+
+# If the EEPROM wasn't programmed, use the MAC address
+-b macaddr -n 4
+```
+
 ## Caveats
 
 This utility doesn't provide any assurance of the uniqueness of returned IDs. It
