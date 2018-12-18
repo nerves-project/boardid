@@ -145,8 +145,15 @@ int main(int argc, char *argv[])
     memset(options, 0, sizeof(options));
     int current_set = -1;
 
+    if (argc >= 3 && strcmp(argv[1], "-r") == 0)
+        root_prefix = argv[2];
+
+    int merged_argc;
+    char *merged_argv[MAX_ARGC];
+    merge_config(argc, argv, &merged_argc, merged_argv, MAX_ARGC);
+
     int opt;
-    while ((opt = getopt(argc, argv, "b:f:k:l:n:r:vu:?")) != -1) {
+    while ((opt = getopt(merged_argc, merged_argv, "b:f:k:l:n:r:vu:?")) != -1) {
         switch (opt) {
         case 'b':
             current_set++;
@@ -212,7 +219,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (optind < argc) {
+    if (optind < merged_argc) {
         // Support deprecated mode of passing the digit count via a positional argument
         default_digits = strtol(argv[optind], 0, 0);
         if (default_digits < 1)

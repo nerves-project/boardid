@@ -22,6 +22,7 @@
 
 #define MAX_SERIALNUMBER_LEN  32
 #define MAX_STRATEGIES_TO_TRY 8
+#define MAX_ARGC 64
 
 #ifndef PROGRAM_VERSION
 #define PROGRAM_VERSION unknown
@@ -33,6 +34,7 @@
 
 FILE *fopen_helper(const char *filename, const char *mode);
 void bin_to_hex(const uint8_t *input, size_t len, char *output);
+void merge_config(int argc, char *argv[], int *merged_argc, char **merged_argv, int max_args);
 
 struct id_options
 {

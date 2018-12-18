@@ -1,7 +1,11 @@
 
 VERSION=1.4.0
 
-boardid: $(wildcard src/*.c)
+SRCS = $(wildcard src/*.c)
+
+all: boardid
+
+boardid: $(SRCS)
 	$(CC) -Wall -O2 -DPROGRAM_VERSION=$(VERSION) -o $@ $^
 
 check: boardid
@@ -10,4 +14,4 @@ check: boardid
 clean:
 	-rm -fr boardid tests/work
 
-.PHONY: clean check
+.PHONY: all clean check

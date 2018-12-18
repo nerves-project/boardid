@@ -1,0 +1,33 @@
+#!/bin/sh
+
+#
+# Test loading a config file
+#
+
+cat >$WORK/proc/cpuinfo <<EOF
+processor	: 0
+model name	: ARMv6-compatible processor rev 7 (v6l)
+BogoMIPS	: 2.00
+Features	: half thumb fastmult vfp edsp java tls
+CPU implementer	: 0x41
+CPU architecture: 7
+CPU variant	: 0x0
+CPU part	: 0xb76
+CPU revision	: 7
+
+Hardware	: BCM2708
+Revision	: 000e
+Serial		: 0000000019f2f468
+EOF
+
+cat >$WORK/etc/boardid.config <<EOF
+# This is a comment
+-b rpi
+
+# 4 digits
+-n 4
+EOF
+
+cat >$EXPECTED <<EOF
+f468
+EOF
