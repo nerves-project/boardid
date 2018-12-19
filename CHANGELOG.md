@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.1
+
+* Bug fixes
+  * Fix bug that would cause unprogrammed ATECC508A chips to report bogus
+    IDs
+
 ## v1.5.0
 
 * New features
