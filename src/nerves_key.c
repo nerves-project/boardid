@@ -22,13 +22,13 @@ int nerves_key_id(const struct id_options *options, char *buffer, int len)
     uint8_t otp[32];
     if (atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_OTP, 0, 0, 0, otp, 32) < 0 &&
         atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_OTP, 0, 0, 0, otp, 32) < 0)
-        return -1;
+        return 0;
 
     atecc508a_sleep(fd);
     atecc508a_close(fd);
 
     if (memcmp(otp, nerves_key_magic, sizeof(nerves_key_magic)) != 0)
-        return -1;
+        return 0;
 
     const char *serial_number = (const char *) &otp[16];
     size_t serial_number_len = strnlen(serial_number, 16);

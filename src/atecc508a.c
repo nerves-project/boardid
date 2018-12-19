@@ -164,7 +164,7 @@ static int atecc508a_request(int fd, const struct atecc508a_opcode_info *op, uin
 
     // Check length
     if (response[0] != op->length + 3) {
-        ERROR("Response error for opcode 0x%02x: 0x%02x", msg[2], response[0]);
+        ERROR("Response error for opcode 0x%02x: %02x %02x %02x %02x", msg[2], response[0], response[1], response[2], response[3]);
         return -1;
     }
 
