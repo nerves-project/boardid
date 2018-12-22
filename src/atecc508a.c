@@ -193,33 +193,42 @@ void atecc508a_close(int fd)
 
 int atecc508a_wakeup(int fd)
 {
-    // See ATECC508A 6.1 for the wakeup sequence.
-    //
-    // Write to address 0 to pull SDA down for the wakeup interval (60 uS).
-    // Since only 8-bits get through, the I2C speed needs to be < 133 KHz for
-    // this to work.
-    uint8_t zero = 0;
-    i2c_write(fd, 0, &zero, 1);
+    for (int i = 0; i < 2; i++) {
+        // See ATECC508A 6.1 for the wakeup sequence.
+        //
+        // Write to address 0 to pull SDA down for the wakeup interval (60 uS).
+        // Since only 8-bits get through, the I2C speed needs to be < 133 KHz for
+        // this to work.
+        uint8_t zero = 0;
+        i2c_write(fd, 0, &zero, 1);
 
-    // Wait for the device to wake up for real
-    microsleep(ATECC508A_WAKE_DELAY_US);
+        // Wait for the device to wake up for real
+        microsleep(ATECC508A_WAKE_DELAY_US);
 
-    // Check that it's awake by reading its signature
-    uint8_t buffer[4];
-    if (i2c_read(fd, ATECC508A_ADDR, buffer, sizeof(buffer)) < 0) {
-        ERROR("Can't wakeup ATECC508A");
-        return -1;
+        // Check that it's awake by reading its signature
+        uint8_t buffer[4];
+        if (i2c_read(fd, ATECC508A_ADDR, buffer, sizeof(buffer)) < 0) {
+            ERROR("Can't wakeup ATECC508A");
+            return -1;
+        }
+
+        if (buffer[0] == 0x04 &&
+            buffer[1] == 0x11 &&
+            buffer[2] == 0x33 &&
+            buffer[3] == 0x43) {
+            // Success
+            return 0;
+        }
+
+        ERROR("Unexpected ATECC508A wakeup response: %02x%02x%02x%02x", buffer[0], buffer[1], buffer[2], buffer[3]);
+
+        // Maybe the device is already awake due to an error. Try sleeping it
+        // and possibly trying again
+        atecc508a_sleep(fd);
+        microsleep(ATECC508A_WAKE_DELAY_US);
     }
-
-    if (buffer[0] != 0x04 ||
-            buffer[1] != 0x11 ||
-            buffer[2] != 0x33 ||
-            buffer[3] != 0x43) {
-        ERROR("Bad ATECC508A signature: %02x%02x%02x%02x", buffer[0], buffer[1], buffer[2], buffer[3]);
-        return -1;
-    }
-
-    return 0;
+    ERROR("No ATECC508A or it's in a really bad state");
+    return -1;
 }
 
 int atecc508a_sleep(int fd)
