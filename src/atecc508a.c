@@ -313,21 +313,25 @@ int atecc508a_read_zone_nowake(int fd, uint8_t zone, uint16_t slot, uint8_t bloc
  */
 int atecc508a_read_serial(int fd, uint8_t *serial_number)
 {
+    int rc = 0;
     if (atecc508a_wakeup(fd) < 0)
         return -1;
 
     // Read the config -> try 2 times just in case there's a hiccup on the I2C bus
     uint8_t buffer[32];
     if (atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_CONFIG, 0, 0, 0, buffer, 32) < 0 &&
-            atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_CONFIG, 0, 0, 0, buffer, 32) < 0)
-        return -1;
+        atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_CONFIG, 0, 0, 0, buffer, 32) < 0) {
+        rc = -1;
+        goto cleanup;
+    }
 
     // Copy out the serial number (see datasheet for offsets)
     memcpy(&serial_number[0], &buffer[0], 4);
     memcpy(&serial_number[4], &buffer[8], 5);
 
+cleanup:
     atecc508a_sleep(fd);
-    return 0;
+    return rc;
 }
 
 /**
@@ -342,6 +346,7 @@ int atecc508a_derive_public_key(int fd, uint8_t slot, uint8_t *key)
 {
     // Send a GenKey command to derive the public key from a previously stored private key
     uint8_t msg[11];
+    int rc = 0;
 
     if (atecc508a_wakeup(fd) < 0)
         return -1;
@@ -357,15 +362,17 @@ int atecc508a_derive_public_key(int fd, uint8_t slot, uint8_t *key)
     msg[8] = 0;
 
     uint8_t response[64 + 3];
-    if (atecc508a_request(fd, &op_genkey, msg, response) < 0)
-        return -1;
+    if (atecc508a_request(fd, &op_genkey, msg, response) < 0) {
+        rc = -1;
+        goto cleanup;
+    }
 
     // Copy the data (bytes after the count field)
     memcpy(key, &response[1], 64);
 
+cleanup:
     atecc508a_sleep(fd);
-
-    return 0;
+    return rc;
 }
 
 /**
@@ -381,6 +388,7 @@ int atecc508a_sign(int fd, uint8_t slot, const uint8_t *data, uint8_t *signature
 {
     // Send a Nonce command to load the data into TempKey
     uint8_t msg[40];
+    int rc = 0;
 
     if (atecc508a_wakeup(fd) < 0)
         return -1;
@@ -394,12 +402,15 @@ int atecc508a_sign(int fd, uint8_t slot, const uint8_t *data, uint8_t *signature
     memcpy(&msg[6], data, 32); // NumIn
 
     uint8_t response[64 + 3];
-    if (atecc508a_request(fd, &op_nonce, msg, response) < 0)
-        return -1;
+    if (atecc508a_request(fd, &op_nonce, msg, response) < 0) {
+        rc = -1;
+        goto cleanup;
+    }
 
     if (response[1] != 0) {
         INFO("Unexpected Nonce response %02x %02x %02x %02x", response[0], response[1], response[2], response[3]);
-        return -1;
+        rc = -1;
+        goto cleanup;
     }
 
     // Sign the value in TempKey
@@ -410,13 +421,15 @@ int atecc508a_sign(int fd, uint8_t slot, const uint8_t *data, uint8_t *signature
     msg[4] = slot;  // KeyID LSB
     msg[5] = 0;     // KeyID MSB
 
-    if (atecc508a_request(fd, &op_sign, msg, response) < 0)
-        return -1;
+    if (atecc508a_request(fd, &op_sign, msg, response) < 0) {
+        rc = -1;
+        goto cleanup;
+    }
 
     // Copy the data (bytes after the count field)
     memcpy(signature, &response[1], 64);
 
+cleanup:
     atecc508a_sleep(fd);
-
-    return 0;
+    return rc;
 }
