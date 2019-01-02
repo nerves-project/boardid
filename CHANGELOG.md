@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.2
+
+* Bug fixes
+  * Leave the ATECC508A in a good state and recover from it being in an
+    unexpected state when querying the ID.
+
 ## v1.5.1
 
 * Bug fixes
