@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.5.3
+
+* Bug fixes
+  * Fix issue preventing config file options from being overridden by the
+    commandline.
+
 ## v1.5.2
 
 * Bug fixes
