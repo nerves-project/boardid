@@ -107,23 +107,21 @@ static int load_config(const char *filename,
 void merge_config(int argc, char *argv[], int *merged_argc, char **merged_argv, int max_args)
 {
     // When merging, argv[0] is first, then the
-    // arguments from boardid.config and then any
-    // additional arguments from the commandline.
+    // commandline arguments and then boardid.config
+    // arguments.
     // This way, the commandline takes precedence.
-    *merged_argc = 1;
-    merged_argv[0] = argv[0];
+
+    if (argc > max_args)
+        argc = max_args;
+    memcpy(&merged_argv[0], &argv[0], argc * sizeof(char**));
+    *merged_argc = argc;
 
     *merged_argc += load_config("/etc/boardid.config",
-                                &merged_argv[1],
+                                &merged_argv[argc],
                                 max_args - argc);
 
-    if (*merged_argc + argc - 1 > max_args) {
+    if (*merged_argc == max_args)
         warn("Too many arguments specified between the config file and commandline. Dropping some.");
-        argc = max_args - *merged_argc + 1;
-    }
-
-    memcpy(&merged_argv[*merged_argc], &argv[1], (argc - 1) * sizeof(char**));
-    *merged_argc += argc - 1;
 }
 
 
