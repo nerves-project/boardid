@@ -21,8 +21,8 @@ mechanisms:
 * Reading the MAC address of `eth0`
 * Reading bytes from a file
 * Reading a key from the U-Boot environment
-* Reading an [ATECC508A](https://www.microchip.com/wwwproducts/en/ATECC508A)'s serial number via an I2C bus
-* Reading the serial number stored in a [NervesKey](https://github.com/fhunleth/atecc508a/)'s OTP memory
+* Reading an [ATECC508A/608A](https://www.microchip.com/wwwproducts/en/ATECC508A)'s serial number via an I2C bus
+* Reading the serial number stored in a [NervesKey](https://github.com/nerves-hub/nerves_key/)'s OTP memory
 
 If your board isn't supported, please consider sending a pull request.
 
