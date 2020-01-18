@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.6.0
+
+* New features
+  * Read the serial number out of the DMI/SMBIOS information. This is common on
+    x86 system.
+
 ## v1.5.3
 
 * Bug fixes
