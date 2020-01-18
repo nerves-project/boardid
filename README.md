@@ -53,6 +53,7 @@ Supported boards/methods:
   ev3        Lego EV3
   chip       Next Thing Co - C.H.I.P.
   cpuinfo    Read /proc/cpuinfo
+  dmi        Read the system ID out of the DMI (x86 devices)
   bbb        Beaglebone Black
   macaddr    Read eth0's MAC address
   linkit     LinkIt Smart (WLAN MAC address)

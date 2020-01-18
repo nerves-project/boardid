@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#
+# Read the ID from the DMI (/sys/firmware/dmi/tables/DMI)
+#
+
+mkdir -p $WORK/sys/firmware/dmi/tables
+cp $TESTS_DIR/dmi/DMI-upboard $WORK/sys/firmware/dmi/tables/DMI
+
+CMDLINE="-b dmi -k 0"
+
+cat >$EXPECTED <<EOF
+19620608
+EOF

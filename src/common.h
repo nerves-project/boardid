@@ -55,6 +55,7 @@ int binfile_id(const struct id_options *options, char *buffer, int len);
 int uboot_env_id(const struct id_options *options, char *buffer, int len);
 int atecc508a_id(const struct id_options *options, char *buffer, int len);
 int nerves_key_id(const struct id_options *options, char *buffer, int len);
+int dmi_id(const struct id_options *options, char *buffer, int len);
 int force_id(const struct id_options *options, char *buffer, int len);
 
 // The root prefix is used for unit testing so that simulated /proc or /sys

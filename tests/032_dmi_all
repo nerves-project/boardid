@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#
+# Read the ID from the DMI (/sys/firmware/dmi/tables/DMI)
+#
+
+# The test data comes from manually reading a DMI file on a
+# computer.
+
+mkdir -p $WORK/sys/firmware/dmi/tables
+cp $TESTS_DIR/dmi/DMI-amd $WORK/sys/firmware/dmi/tables/DMI
+
+CMDLINE="-b dmi -k 0"
+
+cat >$EXPECTED <<EOF
+To Be Filled By O.E.M.
+EOF

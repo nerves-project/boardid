@@ -77,6 +77,11 @@ static const char *nerves_key_aliases[] = {
     NULL,       NULL
 };
 
+static const char *dmi_aliases[] = {
+    "dmi",  "Read the system ID out of the DMI",
+    NULL,       NULL
+};
+
 static const char *force_aliases[] = {
     "force",  "Force the ID (Specify ID with '-f')",
     NULL,       NULL
@@ -91,6 +96,7 @@ static struct board_id_pair boards[] = {
     { uboot_env_aliases, uboot_env_id, false},
     { atecc508a_aliases, atecc508a_id, false },
     { nerves_key_aliases, nerves_key_id, false },
+    { dmi_aliases, dmi_id, true },
     { force_aliases, force_id, false },
     { NULL, NULL }
 };
