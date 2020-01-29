@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.7.0
+
+* New features
+  * Support hardcoded serial number prefixes so that these strings can be
+    centralized in `/etc/boardid.config`. See the `-p` option.
+
 ## v1.6.0
 
 * New features
