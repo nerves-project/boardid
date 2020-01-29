@@ -131,11 +131,11 @@ static int scan_smbios_structures(const uint8_t *data, int len, struct dmi_info 
 }
 
 
-int dmi_id(const struct id_options *options, char *buffer, int len)
+bool dmi_id(const struct boardid_options *options, char *buffer)
 {
     FILE *fp = fopen_helper("/sys/firmware/dmi/tables/DMI", "r");
     if (!fp)
-        return 0;
+        return false;
 
     uint8_t data[4096];
     size_t amount_read = fread(data, 1, sizeof(data), fp);
@@ -144,17 +144,14 @@ int dmi_id(const struct id_options *options, char *buffer, int len)
     // See if we can find the serial number in the DMI info
     struct dmi_info result;
     if (!scan_smbios_structures(data, amount_read, &result))
-        return 0;
+        return false;
 
-    // The user may specify how many digits to print
-    int max_digits = strlen(result.serial);
-    int digits = len - 1;
-    if (digits > max_digits)
-        digits = max_digits;
+    int digits = strlen(result.serial);
+    if (digits > MAX_SERIALNUMBER_LEN)
+        digits = MAX_SERIALNUMBER_LEN;
 
-    int offset = max_digits - digits;
-    memcpy(buffer, result.serial + offset, digits);
+    memcpy(buffer, result.serial, digits);
     buffer[digits] = '\0';
 
-    return 1;
+    return true;
 }

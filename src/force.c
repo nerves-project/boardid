@@ -19,18 +19,15 @@
 #include <err.h>
 #include <string.h>
 
-int force_id(const struct id_options *options, char *buffer, int len)
+bool force_id(const struct boardid_options *options, char *buffer)
 {
     if (!options->filename) {
         warnx("specify -f to force an ID");
-        return 0;
+        return false;
     }
 
-    strncpy(buffer, options->filename, len - 1);
-    buffer[len - 1] = '\0';
+    strncpy(buffer, options->filename, MAX_SERIALNUMBER_LEN);
+    buffer[MAX_SERIALNUMBER_LEN] = '\0';
 
-    if (buffer[0] == '\0')
-        return 0;
-    else
-        return 1;
+    return buffer[0] != '\0';
 }

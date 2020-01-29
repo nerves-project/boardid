@@ -30,13 +30,13 @@
 //                 with mkenvimage.
 //
 
-static int uboot_env_read(const char *uenv, size_t size, const char *varname, char *varvalue, int varvalue_len)
+static bool uboot_env_read(const char *uenv, size_t size, const char *varname, char *varvalue, int varvalue_len)
 {
     uint32_t expected_crc32 = ((uint8_t) uenv[0] | ((uint8_t) uenv[1] << 8) | ((uint8_t) uenv[2] << 16) | ((uint8_t) uenv[3] << 24));
     uint32_t actual_crc32 = crc32buf(uenv + 4, size - 4);
     if (expected_crc32 != actual_crc32) {
         warnx("U-boot environment CRC32 mismatch (expected 0x%08x; got 0x%08x)", expected_crc32, actual_crc32);
-        return 0;
+        return false;
     }
 
     const char *end = uenv + size;
@@ -46,7 +46,7 @@ static int uboot_env_read(const char *uenv, size_t size, const char *varname, ch
         for (;;) {
             if (endname == end || *endname == '\0') {
                 warnx("Invalid U-boot environment");
-                return 0;
+                return false;
             }
 
             if (*endname == '=')
@@ -60,7 +60,7 @@ static int uboot_env_read(const char *uenv, size_t size, const char *varname, ch
         for (;;) {
             if (endvalue == end) {
                 warnx("Invalid U-boot environment");
-                return 0;
+                return false;
             }
 
             if (*endvalue == '\0')
@@ -76,16 +76,16 @@ static int uboot_env_read(const char *uenv, size_t size, const char *varname, ch
             strncpy(varvalue, value, max_len);
             varvalue[max_len] = 0;
 
-            return 1;
+            return true;
         }
 
         name = endvalue + 1;
     }
 
-    return 0;
+    return false;
 }
 
-static void find_uboot_env(const struct id_options *options, char *filename, int *offset, int *size)
+static void find_uboot_env(const struct boardid_options *options, char *filename, int *offset, int *size)
 {
     // Default to the input options
     *offset = options->offset;
@@ -119,18 +119,18 @@ static void find_uboot_env(const struct id_options *options, char *filename, int
     fclose(fp);
 }
 
-int uboot_env_id(const struct id_options *options, char *buffer, int len)
+bool uboot_env_id(const struct boardid_options *options, char *buffer)
 {
     char filename[256];
     int offset;
     int size;
-    int rc = 0;
+    bool rc = false;
 
     find_uboot_env(options, filename, &offset, &size);
 
     FILE *fp = fopen_helper(filename, "rb");
     if (!fp)
-        return 0;
+        return false;
 
     char *uenv = malloc(size);
     if (!uenv)
@@ -146,11 +146,11 @@ int uboot_env_id(const struct id_options *options, char *buffer, int len)
         goto cleanup;
     }
 
-    rc = uboot_env_read(uenv, size, options->uenv_varname, buffer, len);
+    rc = uboot_env_read(uenv, size, options->uenv_varname, buffer, MAX_SERIALNUMBER_LEN + 1);
 
     // Check for empty string
     if (rc && buffer[0] == '\0')
-        rc = 0;
+        rc = false;
 
 cleanup:
     if (uenv)

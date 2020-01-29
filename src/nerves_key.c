@@ -7,7 +7,7 @@
 
 static uint8_t nerves_key_magic[4] = {0x4e, 0x72, 0x76, 0x73};
 
-int nerves_key_id(const struct id_options *options, char *buffer, int len)
+bool nerves_key_id(const struct boardid_options *options, char *buffer)
 {
     int fd = atecc508a_open(options->filename);
     if (fd < 0)
@@ -15,7 +15,7 @@ int nerves_key_id(const struct id_options *options, char *buffer, int len)
 
     if (atecc508a_wakeup(fd) < 0) {
         atecc508a_close(fd);
-        return 0;
+        return false;
     }
 
     // The Nerves Key's serial number is in the OTP memory
@@ -24,25 +24,19 @@ int nerves_key_id(const struct id_options *options, char *buffer, int len)
         atecc508a_read_zone_nowake(fd, ATECC508A_ZONE_OTP, 0, 0, 0, otp, 32) < 0) {
         atecc508a_sleep(fd);
         atecc508a_close(fd);
-        return 0;
+        return false;
     }
 
     atecc508a_sleep(fd);
     atecc508a_close(fd);
 
     if (memcmp(otp, nerves_key_magic, sizeof(nerves_key_magic)) != 0)
-        return 0;
+        return false;
 
     const char *serial_number = (const char *) &otp[16];
     size_t serial_number_len = strnlen(serial_number, 16);
 
-    // The ATECC508A has a 18 character serial number (9 bytes)
-    if (len > serial_number_len)
-        len = serial_number_len;
-    if (len < 1)
-        len = 1;
-
-    memcpy(buffer, serial_number, len);
-    buffer[len] = 0;
-    return 1;
+    memcpy(buffer, serial_number, serial_number_len);
+    buffer[serial_number_len] = 0;
+    return true;
 }

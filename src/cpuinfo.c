@@ -23,11 +23,11 @@
 // Read the serial number from /proc/cpuinfo.
 // The Raspberry Pi and Lego EV3 report their serial number using this mechanism.
 
-int cpuinfo_id(const struct id_options *options, char *buffer, int len)
+bool cpuinfo_id(const struct boardid_options *options, char *buffer)
 {
     FILE *fp = fopen_helper("/proc/cpuinfo", "r");
     if (!fp)
-        return 0;
+        return false;
 
     char line[256];
     const char *serial = NULL;
@@ -42,17 +42,15 @@ int cpuinfo_id(const struct id_options *options, char *buffer, int len)
 
     // Make sure that the serial number was found.
     if (!serial)
-        return 0;
+        return false;
 
-    // The user may specify how many digits to print
-    int max_digits = strlen(serial) - 1; // -1 is for the '\n' at the end of the line
-    int digits = len - 1;
-    if (digits > max_digits)
-        digits = max_digits;
+    // Copy the serial number to the output buffer
+    int digits = strlen(serial) - 1; // -1 is for the '\n' at the end of the line
+    if (digits > MAX_SERIALNUMBER_LEN)
+        digits = MAX_SERIALNUMBER_LEN;
 
-    int offset = max_digits - digits;
-    memcpy(buffer, serial + offset, digits);
+    memcpy(buffer, serial, digits);
     buffer[digits] = '\0';
 
-    return 1;
+    return true;
 }

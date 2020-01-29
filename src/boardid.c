@@ -30,8 +30,9 @@ const char *root_prefix = NULL;
 
 struct board_id_pair {
     const char **aliases;
-    int (*read_id)(const struct id_options *options, char *buffer, int len);
+    bool (*read_id)(const struct boardid_options *options, char *buffer);
     bool autodetect; // true to attempt autodetection
+    bool trim_left; // true to trim serial numbers from the left
 };
 
 static const char *cpuinfo_aliases[] = {
@@ -87,18 +88,18 @@ static const char *force_aliases[] = {
     NULL,       NULL
 };
 
-static struct board_id_pair boards[] = {
-    { cpuinfo_aliases, cpuinfo_id, true },
-    { bbb_aliases, beagleboneblack_id, true },
-    { macaddr_aliases, macaddr_id, true },
-    { linkit_aliases, linkit_id, true },
-    { binfile_aliases, binfile_id, false },
-    { uboot_env_aliases, uboot_env_id, false},
-    { atecc508a_aliases, atecc508a_id, false },
-    { nerves_key_aliases, nerves_key_id, false },
-    { dmi_aliases, dmi_id, true },
-    { force_aliases, force_id, false },
-    { NULL, NULL }
+static const struct board_id_pair boards[] = {
+    { cpuinfo_aliases, cpuinfo_id, true, false },
+    { bbb_aliases, beagleboneblack_id, true, false },
+    { macaddr_aliases, macaddr_id, true, false },
+    { linkit_aliases, linkit_id, true, false },
+    { binfile_aliases, binfile_id, false, false },
+    { uboot_env_aliases, uboot_env_id, false, true},
+    { atecc508a_aliases, atecc508a_id, false, false },
+    { nerves_key_aliases, nerves_key_id, false, false },
+    { dmi_aliases, dmi_id, true, false },
+    { force_aliases, force_id, false, true },
+    { NULL, NULL, false, false }
 };
 
 static void usage()
@@ -121,16 +122,16 @@ static void usage()
     printf("'-b' can be specified multiple times to try more than one method.\n");
     printf("\n");
     printf("Supported boards/methods:\n");
-    for (struct board_id_pair *b = boards; b->aliases; b++) {
+    for (const struct board_id_pair *b = boards; b->aliases; b++) {
         for (const char **alias = b->aliases; *alias != NULL; alias += 2)
             printf("  %-9s  %s\n", alias[0], alias[1]);
     }
     printf("\n");
 }
 
-static struct board_id_pair *find_board(const char *name)
+static const struct board_id_pair *find_board(const char *name)
 {
-    struct board_id_pair *board = boards;
+    const struct board_id_pair *board = boards;
     while (board->aliases) {
         for (const char **alias = board->aliases; *alias != NULL; alias += 2) {
             if (strcmp(name, *alias) == 0)
@@ -138,8 +139,97 @@ static struct board_id_pair *find_board(const char *name)
         }
         board++;
     }
+    warnx("Couldn't find ID querier '%s'", name);
     return NULL;
 }
+
+static void right_trim_serial_number(char *serial_number, int desired_digits)
+{
+    // If the user doesn't want all the digits, return the rightmost
+    // ones. This heuristic tends to be more desirable when it's needed
+    // since leftmost digits frequently change less.
+    int num_digits = strlen(serial_number);
+    if (desired_digits < num_digits) {
+        int offset = num_digits - desired_digits;
+        memmove(serial_number, serial_number + offset, desired_digits);
+        serial_number[desired_digits] = '\0';
+    }
+}
+
+static void left_trim_serial_number(char *serial_number, int desired_digits)
+{
+    serial_number[desired_digits] = '\0';
+}
+
+static void trim_serial_number(char *serial_number, int desired_digits, bool trim_left)
+{
+    if (trim_left)
+        left_trim_serial_number(serial_number, desired_digits);
+    else
+        right_trim_serial_number(serial_number, desired_digits);
+}
+
+/**
+ * Try autodetecting the ID
+ *
+ * The serial_number buffer must be MAX_SERIALNUMBER_LEN + 1 or
+ * larger.
+ *
+ * desired_digits is a maximum number of digits to return.
+ *
+ * Returns true if a serial number was found
+ * Returns false if couldn't be autodetected
+ */
+bool boardid_autodetect(int desired_digits, char *serial_number)
+{
+    struct boardid_options null_options;
+    memset(&null_options, 0, sizeof(null_options));
+
+    // Try each board until one works
+    const struct board_id_pair *board = boards;
+    while (board->read_id) {
+        memset(serial_number, 0, MAX_SERIALNUMBER_LEN + 1);
+        bool worked = board->read_id(&null_options, serial_number);
+        if (worked) {
+            trim_serial_number(serial_number, desired_digits, board->trim_left);
+            return true;
+        }
+        board++;
+    }
+
+    return false;
+}
+
+/**
+ * Read a board's serial number
+ *
+ * A string identifying the serial number querier to use. Depending on
+ * the querier, some or all of the fields in the boardid_options struct
+ * will need to be filled out. See the struct and the querier docs for
+ * details.
+ *
+ * The serial_number buffer must be MAX_SERIALNUMBER_LEN + 1 or
+ * larger.
+ *
+ * Returns true if a serial number was found
+ * Returns false if not
+ */
+bool boardid_read(const char *querier, const struct boardid_options *options, char *serial_number)
+{
+    memset(serial_number, 0, MAX_SERIALNUMBER_LEN + 1);
+    const struct board_id_pair *board = find_board(querier);
+    if (board && board->read_id(options, serial_number)) {
+        trim_serial_number(serial_number, options->digits, board->trim_left);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+struct cmdline_option {
+    const char *querier_name;
+    struct boardid_options id_options;
+};
 
 int main(int argc, char *argv[])
 {
@@ -147,7 +237,7 @@ int main(int argc, char *argv[])
     //   Print all digits in the id
     //   Auto-detect the board
     int default_digits = MAX_SERIALNUMBER_LEN;
-    struct id_options options[MAX_STRATEGIES_TO_TRY];
+    struct cmdline_option options[MAX_STRATEGIES_TO_TRY];
     memset(options, 0, sizeof(options));
     int current_set = -1;
 
@@ -166,27 +256,27 @@ int main(int argc, char *argv[])
             if (current_set >= MAX_STRATEGIES_TO_TRY)
                 errx(EXIT_FAILURE, "Too many '-b' options");
 
-            options[current_set].name = optarg;
-            options[current_set].digits = default_digits;
+            options[current_set].querier_name = optarg;
+            options[current_set].id_options.digits = default_digits;
 
             break;
 
         case 'f':
             if (current_set < 0)
                 errx(EXIT_FAILURE, "Specify '-b' first");
-            options[current_set].filename = optarg;
+            options[current_set].id_options.filename = optarg;
             break;
 
         case 'k':
             if (current_set < 0)
                 errx(EXIT_FAILURE, "Specify '-b' first");
-            options[current_set].offset = strtol(optarg, 0, 0);
+            options[current_set].id_options.offset = strtol(optarg, 0, 0);
             break;
 
         case 'l':
             if (current_set < 0)
                 errx(EXIT_FAILURE, "Specify '-b' first");
-            options[current_set].size = strtol(optarg, 0, 0);
+            options[current_set].id_options.size = strtol(optarg, 0, 0);
             break;
 
         case 'n':
@@ -200,7 +290,7 @@ int main(int argc, char *argv[])
             if (current_set < 0)
                 default_digits = digits;
             else
-                options[current_set].digits = digits;
+                options[current_set].id_options.digits = digits;
             break;
         }
 
@@ -215,7 +305,7 @@ int main(int argc, char *argv[])
         case 'u':
             if (current_set < 0)
                 errx(EXIT_FAILURE, "Specify '-b' first");
-            options[current_set].uenv_varname = optarg;
+            options[current_set].id_options.uenv_varname = optarg;
             break;
 
         case '?':
@@ -234,27 +324,18 @@ int main(int argc, char *argv[])
             default_digits = MAX_SERIALNUMBER_LEN;
 
         if (current_set >= 0)
-            options[current_set].digits = default_digits;
+            options[current_set].id_options.digits = default_digits;
     }
 
     char serial_number[MAX_SERIALNUMBER_LEN + 1];
-    int worked = 0;
+    bool worked = false;
     if (current_set >= 0) {
         // Check using user-specified strategies
         for (int i = 0; i <= current_set && !worked; i++) {
-            struct board_id_pair *board = find_board(options[i].name);
-            if (board == NULL)
-                errx(EXIT_FAILURE, "Unsupported strategy '%s'", options[i].name);
-
-            worked = board->read_id(&options[i], serial_number, options[i].digits + 1);
+            worked = boardid_read(options[i].querier_name, &options[i].id_options, serial_number);
         }
     } else {
-        // Try each board until one works
-        struct board_id_pair *board = boards;
-        while (board->read_id && !worked) {
-            worked = board->read_id(&options[0], serial_number, default_digits + 1);
-            board++;
-        }
+        worked = boardid_autodetect(default_digits, serial_number);
     }
 
     if (worked) {
@@ -262,7 +343,7 @@ int main(int argc, char *argv[])
         printf("%s\n", serial_number);
     } else {
         // Failure: print all zeros
-        int to_print = (current_set >= 0) ? options[current_set].digits : default_digits;
+        int to_print = (current_set >= 0) ? options[current_set].id_options.digits : default_digits;
         for (int i = 0; i < to_print; i++)
             printf("0");
         printf("\n");

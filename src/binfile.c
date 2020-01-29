@@ -19,17 +19,17 @@
 
 #include "common.h"
 
-#define MAX_BINFILE_ID_LEN 64
+#define MAX_BINFILE_ID_LEN (MAX_SERIALNUMBER_LEN / 2)
 
-int binfile_id(const struct id_options *options, char *buffer, int len)
+bool binfile_id(const struct boardid_options *options, char *buffer)
 {
     FILE *fp = fopen_helper(options->filename, "r");
     if (!fp)
-        return 0;
+        return false;
 
     if (fseek(fp, options->offset, SEEK_SET) < 0) {
         fclose(fp);
-        return 0;
+        return false;
     }
 
     int idlen = options->size;
@@ -39,32 +39,24 @@ int binfile_id(const struct id_options *options, char *buffer, int len)
 
     if (fread(data, 1, idlen, fp) != idlen) {
         fclose(fp);
-        return 0;
+        return false;
     }
 
     fclose(fp);
 
-    char hexdata[MAX_BINFILE_ID_LEN * 2 + 1];
-    bin_to_hex(data, idlen, hexdata);
+    bin_to_hex(data, idlen, buffer);
+    buffer[idlen * 2] = '\0';
 
-    // Return the least significant digits of the serial number
-    // if not returning all of them.
-    int maxdigits = idlen * 2;
-    int digits = len - 1;
-    if (digits > maxdigits)
-        digits = maxdigits;
-    memcpy(buffer, &hexdata[maxdigits - digits], digits);
-    buffer[digits] = 0;
-    return 1;
+    return true;
 }
 
-int linkit_id(const struct id_options *options, char *buffer, int len)
+bool linkit_id(const struct boardid_options *options, char *buffer)
 {
     // Use the LinkIt Smart's WLAN MAC address for the unique ID.
-    struct id_options linkit_options;
+    struct boardid_options linkit_options = *options;
     linkit_options.filename = "/dev/mtdblock2";
     linkit_options.size = 6;
     linkit_options.offset = 0x4;
 
-    return binfile_id(&linkit_options, buffer, len);
+    return binfile_id(&linkit_options, buffer);
 }

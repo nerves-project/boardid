@@ -25,11 +25,11 @@ static void remove_char(char *str, char c);
 // Read the MAC Address from /sys/class/net/eth0/address and use
 // it as a unique ID after removing the colons..
 
-int macaddr_id(const struct id_options *options, char *buffer, int len)
+bool macaddr_id(const struct boardid_options *options, char *buffer)
 {
     FILE *fp = fopen_helper("/sys/class/net/eth0/address", "r");
     if (!fp)
-        return 0;
+        return false;
 
     char line[256];
     char *rc = fgets(line, sizeof(line), fp);
@@ -39,7 +39,7 @@ int macaddr_id(const struct id_options *options, char *buffer, int len)
     // with each byte separated with a colon. That is, 12 hex
     // characters and 5 colons, so 17 characters.
     if (!rc || strlen(line) < 17)
-       return 0;
+       return false;
 
     // Remove the colons
     remove_char(line, ':');
@@ -47,18 +47,9 @@ int macaddr_id(const struct id_options *options, char *buffer, int len)
     // Trim any trailing whitespace
     line[12] = '\0';
 
-    // The user may specify how many digits to print
-    // If so, return the least significant ones.
-    int max_digits = 12;
-    int digits = len - 1;
-    if (digits > max_digits)
-        digits = max_digits;
+    strcpy(buffer, line);
 
-    int offset = max_digits - digits;
-    memcpy(buffer, line + offset, digits);
-    buffer[digits] = '\0';
-
-    return 1;
+    return true;
 }
 
 void remove_char(char *str, char c)

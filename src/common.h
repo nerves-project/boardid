@@ -17,6 +17,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
 
@@ -36,27 +37,28 @@ FILE *fopen_helper(const char *filename, const char *mode);
 void bin_to_hex(const uint8_t *input, size_t len, char *output);
 void merge_config(int argc, char *argv[], int *merged_argc, char **merged_argv, int max_args);
 
-struct id_options
+struct boardid_options
 {
-    const char *name;
+    // Options for all ID queriers
     int digits; // how many digits of the serial number to return
 
+    // Options that depend on the querier
     const char *filename;
     int offset;
     int size;
     const char *uenv_varname;
 };
 
-int cpuinfo_id(const struct id_options *options, char *buffer, int len);
-int macaddr_id(const struct id_options *options, char *buffer, int len);
-int beagleboneblack_id(const struct id_options *options, char *buffer, int len);
-int linkit_id(const struct id_options *options, char *buffer, int len);
-int binfile_id(const struct id_options *options, char *buffer, int len);
-int uboot_env_id(const struct id_options *options, char *buffer, int len);
-int atecc508a_id(const struct id_options *options, char *buffer, int len);
-int nerves_key_id(const struct id_options *options, char *buffer, int len);
-int dmi_id(const struct id_options *options, char *buffer, int len);
-int force_id(const struct id_options *options, char *buffer, int len);
+bool cpuinfo_id(const struct boardid_options *options, char *buffer);
+bool macaddr_id(const struct boardid_options *options, char *buffer);
+bool beagleboneblack_id(const struct boardid_options *options, char *buffer);
+bool linkit_id(const struct boardid_options *options, char *buffer);
+bool binfile_id(const struct boardid_options *options, char *buffer);
+bool uboot_env_id(const struct boardid_options *options, char *buffer);
+bool atecc508a_id(const struct boardid_options *options, char *buffer);
+bool nerves_key_id(const struct boardid_options *options, char *buffer);
+bool dmi_id(const struct boardid_options *options, char *buffer);
+bool force_id(const struct boardid_options *options, char *buffer);
 
 // The root prefix is used for unit testing so that simulated /proc or /sys
 // files can be used.
