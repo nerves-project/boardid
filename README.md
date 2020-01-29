@@ -13,6 +13,7 @@ Supported boards:
 * [Lego EV3](https://www.ev3dev.org/)
 * [LinkIt Smart 7688](https://www.seeedstudio.com/LinkIt-Smart-7688-p-2573.html)
 * Next Thing Co - C.H.I.P.
+* Many off-the-shelf industrial x86 boards via SMBIOS/DMI
 
 If your board isn't listed above, it may be supported via one of the generic
 mechanisms:
@@ -23,6 +24,7 @@ mechanisms:
 * Reading a key from the U-Boot environment
 * Reading an [ATECC508A/608A](https://www.microchip.com/wwwproducts/en/ATECC508A)'s serial number via an I2C bus
 * Reading the serial number stored in a [NervesKey](https://github.com/nerves-hub/nerves_key/)'s OTP memory
+* Reading the serial number from [SMBIOS/DMI](https://www.dmtf.org/standards/smbios)
 
 If your board isn't supported, please consider sending a pull request.
 
@@ -53,7 +55,7 @@ Supported boards/methods:
   ev3        Lego EV3
   chip       Next Thing Co - C.H.I.P.
   cpuinfo    Read /proc/cpuinfo
-  dmi        Read the system ID out of the DMI (x86 devices)
+  dmi        Read the system ID out of the SMBIOS/DMI (x86 devices)
   bbb        Beaglebone Black
   macaddr    Read eth0's MAC address
   linkit     LinkIt Smart (WLAN MAC address)
