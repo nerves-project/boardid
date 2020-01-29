@@ -45,6 +45,7 @@ Options:
   -l <count>        The number of bytes to read for the 'binfile'/'uenv' methods
   -u <varname>      U-boot environment variable name for the 'uenv' method
   -n <count>        Print out count characters (least significant ones)
+  -p <string>       Prefix an ID with the specific string
   -r <prefix>       Root directory prefix (used for unit tests)
   -v                Print out the program version
 

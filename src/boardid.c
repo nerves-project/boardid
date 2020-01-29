@@ -79,7 +79,7 @@ static const char *nerves_key_aliases[] = {
 };
 
 static const char *dmi_aliases[] = {
-    "dmi",  "Read the system ID out of the DMI",
+    "dmi",  "Read the system ID out of the SMBIOS/DMI",
     NULL,       NULL
 };
 
@@ -116,6 +116,7 @@ static void usage()
     printf("  -l <count>        The number of bytes to read for the 'binfile'/'uenv' methods\n");
     printf("  -u <varname>      U-boot environment variable name for the 'uenv' method\n");
     printf("  -n <count>        Print out count characters (least significant ones)\n");
+    printf("  -p <string>       Prefix an ID with the specific string\n");
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
     printf("  -v                Print out the program version\n");
     printf("\n");
@@ -158,6 +159,9 @@ static void right_trim_serial_number(char *serial_number, int desired_digits)
 
 static void left_trim_serial_number(char *serial_number, int desired_digits)
 {
+    // Some options are left trimmed since the original implementation worked
+    // that way and too much time has passed to comfortably change it without
+    // risking breakage in the field.
     serial_number[desired_digits] = '\0';
 }
 
@@ -228,6 +232,7 @@ bool boardid_read(const char *querier, const struct boardid_options *options, ch
 
 struct cmdline_option {
     const char *querier_name;
+    const char *prefix;
     struct boardid_options id_options;
 };
 
@@ -249,7 +254,7 @@ int main(int argc, char *argv[])
     merge_config(argc, argv, &merged_argc, merged_argv, MAX_ARGC);
 
     int opt;
-    while ((opt = getopt(merged_argc, merged_argv, "b:f:k:l:n:r:vu:?")) != -1) {
+    while ((opt = getopt(merged_argc, merged_argv, "b:f:k:l:n:p:r:vu:?")) != -1) {
         switch (opt) {
         case 'b':
             current_set++;
@@ -294,6 +299,12 @@ int main(int argc, char *argv[])
             break;
         }
 
+        case 'p':
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].prefix = optarg;
+            break;
+
         case 'r':
             root_prefix = optarg;
             break;
@@ -329,10 +340,16 @@ int main(int argc, char *argv[])
 
     char serial_number[MAX_SERIALNUMBER_LEN + 1];
     bool worked = false;
+    const char *prefix = "";
     if (current_set >= 0) {
         // Check using user-specified strategies
-        for (int i = 0; i <= current_set && !worked; i++) {
-            worked = boardid_read(options[i].querier_name, &options[i].id_options, serial_number);
+        for (int i = 0; i <= current_set; i++) {
+            if (boardid_read(options[i].querier_name, &options[i].id_options, serial_number)) {
+                if (options[i].prefix)
+                    prefix = options[i].prefix;
+                worked = true;
+                break;
+            }
         }
     } else {
         worked = boardid_autodetect(default_digits, serial_number);
@@ -340,7 +357,7 @@ int main(int argc, char *argv[])
 
     if (worked) {
         // Success
-        printf("%s\n", serial_number);
+        printf("%s%s\n", prefix, serial_number);
     } else {
         // Failure: print all zeros
         int to_print = (current_set >= 0) ? options[current_set].id_options.digits : default_digits;
