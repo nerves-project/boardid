@@ -1,6 +1,6 @@
 # boardid
 
-[![CircleCI](https://circleci.com/gh/fhunleth/boardid.svg?style=svg)](https://circleci.com/gh/fhunleth/boardid)
+[![CircleCI](https://circleci.com/gh/nerves-project/boardid.svg?style=svg)](https://circleci.com/gh/nerves-project/boardid)
 
 This program looks up a device-specific serial number and prints it. The
 original use was to provide some non-changing and unique material for
