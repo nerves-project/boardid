@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.8.0
+
+* New features
+  * Add support for the nVidia Jetson Nano and other boards that use
+    /proc/device-tree/serial-number.
+
 ## v1.7.0
 
 * New features
