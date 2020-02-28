@@ -43,6 +43,12 @@ static const char *cpuinfo_aliases[] = {
     NULL,       NULL
 };
 
+static const char *device_tree_aliases[] = {
+    "jetson",   "nVidia Jetson",
+    "device_tree",  "Read /proc/device-tree/serial-number",
+    NULL,       NULL
+};
+
 static const char *bbb_aliases[] = {
     "bbb",      "Beaglebone Black",
     NULL,       NULL
@@ -90,6 +96,7 @@ static const char *force_aliases[] = {
 
 static const struct board_id_pair boards[] = {
     { cpuinfo_aliases, cpuinfo_id, true, false },
+    { device_tree_aliases, device_tree_id, true, false },
     { bbb_aliases, beagleboneblack_id, true, false },
     { macaddr_aliases, macaddr_id, true, false },
     { linkit_aliases, linkit_id, true, false },

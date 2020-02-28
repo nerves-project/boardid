@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#
+# Check that the device-tree is an automatically checked location
+#
+
+mkdir -p "$WORK/proc/device-tree"
+cat >"$WORK/proc/device-tree/serial-number" << EOF
+0421519091609
+EOF
+
+CMDLINE=""
+
+cat >"$EXPECTED" <<EOF
+0421519091609
+EOF

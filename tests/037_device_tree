@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#
+# Read ID from /proc/device-tree/serial-number
+#
+
+mkdir -p "$WORK/proc/device-tree"
+cat >"$WORK/proc/device-tree/serial-number" << EOF
+0421519091609
+EOF
+
+CMDLINE="-b device_tree"
+
+cat >"$EXPECTED" <<EOF
+0421519091609
+EOF
