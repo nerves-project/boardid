@@ -14,6 +14,7 @@ Supported boards:
 * [LinkIt Smart 7688](https://www.seeedstudio.com/LinkIt-Smart-7688-p-2573.html)
 * Next Thing Co - C.H.I.P.
 * Many off-the-shelf industrial x86 boards via SMBIOS/DMI
+* nVidia Jetson
 
 If your board isn't listed above, it may be supported via one of the generic
 mechanisms:
@@ -25,6 +26,7 @@ mechanisms:
 * Reading an [ATECC508A/608A](https://www.microchip.com/wwwproducts/en/ATECC508A)'s serial number via an I2C bus
 * Reading the serial number stored in a [NervesKey](https://github.com/nerves-hub/nerves_key/)'s OTP memory
 * Reading the serial number from [SMBIOS/DMI](https://www.dmtf.org/standards/smbios)
+* Reading the serial number via the device tree
 
 If your board isn't supported, please consider sending a pull request.
 
@@ -56,17 +58,17 @@ Supported boards/methods:
   ev3        Lego EV3
   chip       Next Thing Co - C.H.I.P.
   cpuinfo    Read /proc/cpuinfo
-  dmi        Read the system ID out of the SMBIOS/DMI (x86 devices)
+  jetson     nVidia Jetson
+  device_tree  Read /proc/device-tree/serial-number
   bbb        Beaglebone Black
   macaddr    Read eth0's MAC address
   linkit     LinkIt Smart (WLAN MAC address)
   binfile    Read '-l' bytes from the file '-f' at offset '-k'
-  uboot_env  Read a U-Boot environment (use `/etc/fw_env.config` or specify
-             file '-f', offset '-k', length '-l') and use the variable '-u'
+  uboot_env  Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the variable '-u'
   atecc508a  Read an ATECC508A (I2C device '-f')
-  nerves_key Read a NervesKey serial number (I2C device '-f')
-  force      Force an ID (specify the ID with '-f')
-```
+  nerves_key  Read a NervesKey (I2C device '-f')
+  dmi        Read the system ID out of the SMBIOS/DMI
+  force      Force the ID (Specify ID with '-f')
 
 Without the `-b` option, `boardid` will try a few methods of determining an ID.
 
