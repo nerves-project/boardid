@@ -14,6 +14,7 @@
    limitations under the License.
 */
 
+#ifndef __APPLE__
 #include <errno.h>
 #include <fcntl.h>
 #include <string.h>
@@ -442,3 +443,18 @@ cleanup:
     atecc508a_sleep(fd);
     return rc;
 }
+#else
+
+#include "atecc508a.h"
+
+// Return errors on OSX
+int atecc508a_open(const char *filename) { return -1; }
+void atecc508a_close(int fd) {}
+int atecc508a_wakeup(int fd) { return -1; }
+int atecc508a_sleep(int fd) { return -1; }
+int atecc508a_read_serial(int fd, uint8_t *serial_number) { return -1; }
+int atecc508a_derive_public_key(int fd, uint8_t slot, uint8_t *key) { return -1; }
+int atecc508a_sign(int fd, uint8_t slot, const uint8_t *data, uint8_t *signature) { return -1; }
+int atecc508a_read_zone_nowake(int fd, uint8_t zone, uint16_t slot, uint8_t block, uint8_t offset, uint8_t *data, uint8_t len) { return -1; }
+
+#endif
