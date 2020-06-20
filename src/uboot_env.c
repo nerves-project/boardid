@@ -30,23 +30,36 @@
 //                 with mkenvimage.
 //
 
-static bool uboot_env_read(const char *uenv, size_t size, const char *varname, char *varvalue, int varvalue_len)
+struct uboot_env_location {
+    char filename[256];
+    int offset;
+    int size;
+    bool redundant;
+};
+
+static int uboot_env_read(const char *uenv,
+                           size_t size,
+                           bool redundant,
+                           const char *varname,
+                           char *varvalue,
+                           int varvalue_len)
 {
+    size_t data_offset = redundant ? 5 : 4;
     uint32_t expected_crc32 = ((uint8_t) uenv[0] | ((uint8_t) uenv[1] << 8) | ((uint8_t) uenv[2] << 16) | ((uint8_t) uenv[3] << 24));
-    uint32_t actual_crc32 = crc32buf(uenv + 4, size - 4);
+    uint32_t actual_crc32 = crc32buf(uenv + data_offset, size - data_offset);
     if (expected_crc32 != actual_crc32) {
         warnx("U-boot environment CRC32 mismatch (expected 0x%08x; got 0x%08x)", expected_crc32, actual_crc32);
-        return false;
+        return -1;
     }
 
     const char *end = uenv + size;
-    const char *name = uenv + 4;
+    const char *name = uenv + data_offset;
     while (name != end && *name != '\0') {
         const char *endname = name + 1;
         for (;;) {
             if (endname == end || *endname == '\0') {
                 warnx("Invalid U-boot environment");
-                return false;
+                return -1;
             }
 
             if (*endname == '=')
@@ -60,7 +73,7 @@ static bool uboot_env_read(const char *uenv, size_t size, const char *varname, c
         for (;;) {
             if (endvalue == end) {
                 warnx("Invalid U-boot environment");
-                return false;
+                return -1;
             }
 
             if (*endvalue == '\0')
@@ -76,85 +89,129 @@ static bool uboot_env_read(const char *uenv, size_t size, const char *varname, c
             strncpy(varvalue, value, max_len);
             varvalue[max_len] = 0;
 
-            return true;
+            // If redundant, return the generation number
+            return redundant ? (unsigned char) uenv[4] : 0;
         }
 
         name = endvalue + 1;
     }
 
-    return false;
+    return -1;
 }
 
-static void find_uboot_env(const struct boardid_options *options, char *filename, int *offset, int *size)
+static int find_uboot_env(const struct boardid_options *options,
+                          struct uboot_env_location *locations)
 {
-    // Default to the input options
-    *offset = options->offset;
-    *size = options->size;
-    *filename = '\0';
+    // Default to no locations
+    memset(locations, 0, 2 * sizeof(struct uboot_env_location));
 
     // If the user specified a filename then use it
     if (options->filename) {
-        strcpy(filename, options->filename);
-        return;
+        locations->offset = options->offset;
+        locations->size = options->size;
+        strcpy(locations->filename, options->filename);
+        return 1;
     }
 
     // Try to read the options from '/etc/fw_env.config'
     FILE *fp = fopen_helper("/etc/fw_env.config", "r");
     if (!fp)
-        return;
+        return 0;
 
-    while (!feof(fp)) {
+    int i = 0;
+    while (i <= 2 && !feof(fp)) {
         // fw_env.conf has comments, whitespace and lines like follows:
         // # Device name   Device offset   Env. size       Flash sector size       Number of sectors
         // /dev/mmcblk0    0x000000        0x2000          0x200                   16
+        char line[256];
+        if (fgets(line, sizeof(line), fp) == NULL)
+            break;
 
-        int sector_size;
-        int num_sectors;
-        int num = fscanf(fp, "%255s %i %i %i %i", filename, offset, size, &sector_size, &num_sectors);
+        int num = sscanf(line, "%255s %i %i",
+            locations[i].filename,
+            &locations[i].offset,
+            &locations[i].size);
+        locations[i].redundant = false;
 
         // Check for a match that's not a comment
-        if (num == 5 && filename[0] != '#')
-            break;
+        if (num == 3 && locations[i].filename[0] != '#') {
+            i++;
+        }
     }
     fclose(fp);
+
+    if (i == 2) {
+        locations[0].redundant = locations[1].redundant = true;
+    }
+
+    return i;
 }
 
-bool uboot_env_id(const struct boardid_options *options, char *buffer)
+static int uboot_read_one_env(const struct uboot_env_location *location,
+                              const char *varname,
+                              char *buffer,
+                              int len)
 {
-    char filename[256];
-    int offset;
-    int size;
-    bool rc = false;
+    int rc = -1;
 
-    find_uboot_env(options, filename, &offset, &size);
-
-    FILE *fp = fopen_helper(filename, "rb");
+    FILE *fp = fopen_helper(location->filename, "rb");
     if (!fp)
-        return false;
+        return -1;
 
-    char *uenv = malloc(size);
+    char *uenv = malloc(location->size);
     if (!uenv)
         goto cleanup;
 
-    if (fseek(fp, offset, SEEK_SET) < 0) {
-        warn("seek failed on %s", filename);
+    if (fseek(fp, location->offset, SEEK_SET) < 0) {
+        warn("seek failed on %s", location->filename);
         goto cleanup;
     }
 
-    if (fread(uenv, 1, size, fp) != size) {
-        warn("fread failed on %s", filename);
+    if (fread(uenv, 1, location->size, fp) != location->size) {
+        warn("fread failed on %s", location->filename);
         goto cleanup;
     }
 
-    rc = uboot_env_read(uenv, size, options->uenv_varname, buffer, MAX_SERIALNUMBER_LEN + 1);
+    rc = uboot_env_read(uenv, location->size, location->redundant, varname, buffer, MAX_SERIALNUMBER_LEN + 1);
 
     // Check for empty string
-    if (rc && buffer[0] == '\0')
-        rc = false;
+    if (rc >= 0 && buffer[0] == '\0')
+        rc = -1;
 
 cleanup:
     if (uenv)
         free(uenv);
     fclose(fp);
     return rc;
+}
+
+bool uboot_env_id(const struct boardid_options *options, char *buffer)
+{
+    struct uboot_env_location locations[2];
+
+    int count = find_uboot_env(options, locations);
+    if (count <= 0)
+        return false;
+
+    int generation = uboot_read_one_env(&locations[0], options->uenv_varname, buffer, MAX_SERIALNUMBER_LEN + 1);
+    if (count == 2) {
+        // Check if the redundant one is better
+        char tmp[MAX_SERIALNUMBER_LEN + 1];
+        int generation2 =
+            uboot_read_one_env(&locations[1], options->uenv_varname, tmp, MAX_SERIALNUMBER_LEN + 1);
+
+        if (generation < 0 && generation2 >= 0) {
+            memcpy(buffer, tmp, sizeof(tmp));
+            generation = generation2;
+        } else if (generation >= 0 && generation2 >= 0) {
+            uint8_t gen1 = (uint8_t) generation;
+            uint8_t gen2 = (uint8_t) generation2;
+            uint8_t delta = gen2 - gen1;
+            if (delta > 0 && delta < 127) {
+                memcpy(buffer, tmp, sizeof(tmp));
+                generation = generation2;
+            }
+        }
+    }
+    return generation >= 0;
 }
