@@ -7,7 +7,7 @@
 # This u-boot environment block was created by running:
 # printf "var1=This is a string\nvar2=2\nserial_number=0123456789\nvar3=A string with =\nvar4=4" | mkenvimage -s "8192" - | base64
 
-base64_decode >$WORK/dev/mmcblock0 <<EOF
+base64_decode >$WORK/dev/mmcblk0 <<EOF
 C93QInZhcjE9VGhpcyBpcyBhIHN0cmluZwB2YXIyPTIAc2VyaWFsX251bWJlcj0wMTIzNDU2Nzg5
 AHZhcjM9QSBzdHJpbmcgd2l0aCA9AHZhcjQ9NAAA////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ AHZhcjM9QSBzdHJpbmcgd2l0aCA9AHZhcjQ9NAAA////////////////////////////////////
 //////////////////////////////////////////////////////8=
 EOF
 
-CMDLINE="-b uboot_env -f /dev/mmcblock0 -l 8192 -u serial_number -k 0"
+CMDLINE="-b uboot_env -f /dev/mmcblk0 -l 8192 -u serial_number -k 0"
 
 cat >$EXPECTED <<EOF
 0123456789

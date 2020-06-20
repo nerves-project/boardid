@@ -7,7 +7,7 @@
 # This u-boot environment block was created by running:
 # printf "serial_number=\n" | mkenvimage -s "1024" - | base64
 
-base64_decode >$WORK/dev/mmcblock0 <<EOF
+base64_decode >$WORK/dev/mmcblk0 <<EOF
 w8i6sHNlcmlhbF9udW1iZXI9AAD/////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ Revision	: 000e
 Serial		: 0000000019f2f468
 EOF
 
-CMDLINE="-b uboot_env -f /dev/mmcblock0 -l 1024 -u serial_number -k 0 -b rpi -n 4"
+CMDLINE="-b uboot_env -f /dev/mmcblk0 -l 1024 -u serial_number -k 0 -b rpi -n 4"
 
 cat >$EXPECTED <<EOF
 f468
