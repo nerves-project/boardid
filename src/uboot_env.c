@@ -120,7 +120,7 @@ static int find_uboot_env(const struct boardid_options *options,
 
     int i = 0;
     while (i <= 2 && !feof(fp)) {
-        // fw_env.conf has comments, whitespace and lines like follows:
+        // fw_env.config has comments, whitespace and lines like follows:
         // # Device name   Device offset   Env. size       Flash sector size       Number of sectors
         // /dev/mmcblk0    0x000000        0x2000          0x200                   16
         char line[256];
