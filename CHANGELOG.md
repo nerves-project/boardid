@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.9.0
+
+* New features
+  * Support serial numbers stored in redundant U-Boot environment blocks. The
+    environment block location is read from `/etc/fw_env.config`.
+
 ## v1.8.0
 
 * New features
