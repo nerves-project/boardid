@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.10.0
+
+* New features
+  * Support 16+ character serial numbers on NervesKey devices
+  * Support nondefault I2C addresses for ATECC chips
+
 ## v1.9.0
 
 * New features
