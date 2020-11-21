@@ -48,6 +48,7 @@ Options:
   -u <varname>      U-boot environment variable name for the 'uenv' method
   -n <count>        Print out count characters (least significant ones)
   -p <string>       Prefix an ID with the specific string
+  -a <i2c address>  I2C address for the `atecc508a`/`nerves_key` methods
   -r <prefix>       Root directory prefix (used for unit tests)
   -v                Print out the program version
 
@@ -65,8 +66,8 @@ Supported boards/methods:
   linkit     LinkIt Smart (WLAN MAC address)
   binfile    Read '-l' bytes from the file '-f' at offset '-k'
   uboot_env  Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the variable '-u'
-  atecc508a  Read an ATECC508A (I2C device '-f')
-  nerves_key  Read a NervesKey (I2C device '-f')
+  atecc508a  Read an ATECC508A (I2C device '-f', I2C address '-a')
+  nerves_key  Read a NervesKey (I2C device '-f', I2C address '-a')
   dmi        Read the system ID out of the SMBIOS/DMI
   force      Force the ID (Specify ID with '-f')
 

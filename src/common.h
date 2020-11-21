@@ -47,6 +47,7 @@ struct boardid_options
     int offset;
     int size;
     const char *uenv_varname;
+    int i2c_address;
 };
 
 bool cpuinfo_id(const struct boardid_options *options, char *buffer);

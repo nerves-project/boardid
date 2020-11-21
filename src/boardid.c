@@ -75,12 +75,12 @@ static const char *uboot_env_aliases[] = {
 };
 
 static const char *atecc508a_aliases[] = {
-    "atecc508a",  "Read an ATECC508A (I2C device '-f')",
+    "atecc508a",  "Read an ATECC508A (I2C device '-f', I2C address '-a')",
     NULL,       NULL
 };
 
 static const char *nerves_key_aliases[] = {
-    "nerves_key",  "Read a NervesKey (I2C device '-f')",
+    "nerves_key",  "Read a NervesKey (I2C device '-f', I2C address '-a')",
     NULL,       NULL
 };
 
@@ -118,13 +118,14 @@ static void usage()
     printf("Options:\n");
     printf("  -b <board/method> Use the specified board or detection method for\n");
     printf("                    reading the ID.\n");
-    printf("  -f <path>         The file to read for the 'binfile'/'uenv' methods\n");
+    printf("  -f <path>         The file to read for the methods requiring files\n");
     printf("  -k <offset>       The offset in bytes for the 'binfile'/`uenv' methods\n");
     printf("  -l <count>        The number of bytes to read for the 'binfile'/'uenv' methods\n");
     printf("  -u <varname>      U-boot environment variable name for the 'uenv' method\n");
     printf("  -n <count>        Print out count characters (least significant ones)\n");
     printf("  -p <string>       Prefix an ID with the specific string\n");
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
+    printf("  -a <i2c address>  I2C bus address\n");
     printf("  -v                Print out the program version\n");
     printf("\n");
     printf("'-b' can be specified multiple times to try more than one method.\n");
@@ -261,7 +262,7 @@ int main(int argc, char *argv[])
     merge_config(argc, argv, &merged_argc, merged_argv, MAX_ARGC);
 
     int opt;
-    while ((opt = getopt(merged_argc, merged_argv, "b:f:k:l:n:p:r:vu:?")) != -1) {
+    while ((opt = getopt(merged_argc, merged_argv, "a:b:f:k:l:n:p:r:vu:?")) != -1) {
         switch (opt) {
         case 'b':
             current_set++;
@@ -314,6 +315,12 @@ int main(int argc, char *argv[])
 
         case 'r':
             root_prefix = optarg;
+            break;
+
+        case 'a':
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].id_options.i2c_address = strtol(optarg, 0, 0);
             break;
 
         case 'v':
