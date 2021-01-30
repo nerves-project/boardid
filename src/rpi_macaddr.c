@@ -38,8 +38,8 @@ static bool rpi_macaddr_id(const struct boardid_options *options, char *buffer, 
     // get the serial number first
     // it comes as a HEX string
     char serno_string[MAX_SERIALNUMBER_LEN+1] = "";
-    if (!cpuinfo_id(options, serno))
-        return false
+    if (!cpuinfo_id(options, serno_string))
+        return false;
 
     size_t serno_len = strnlen(serno_string, sizeof(serno_string));
 
@@ -51,7 +51,7 @@ static bool rpi_macaddr_id(const struct boardid_options *options, char *buffer, 
     hex_to_bin(serno_string + (serno_len - MAC_ADDR_SER_NUMBYTES*2), MAC_ADDR_SER_NUMBYTES, serno_bytes);
 
 
-    uint8_t mac_bytes[MAC_ADDR_NUMBYTES] = 0;
+    uint8_t mac_bytes[MAC_ADDR_NUMBYTES] = {0};
     // fill in OUI part of MAC address
     memcpy(mac_bytes, mac_oui, MAC_ADDR_OUI_NUMBYTES);
 
@@ -68,7 +68,7 @@ static bool rpi_macaddr_id(const struct boardid_options *options, char *buffer, 
     if (digits > MAX_SERIALNUMBER_LEN)
         digits = MAX_SERIALNUMBER_LEN;
 
-    memcpy(buffer, serial, digits);
+    memcpy(buffer, mac_string, digits);
     buffer[digits] = '\0';
 
     return true;
@@ -77,23 +77,23 @@ static bool rpi_macaddr_id(const struct boardid_options *options, char *buffer, 
 bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
     uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI_OUI;
-    return rpi_macaddr_id(options, buffer, RPI_WLAN_XOR_MAGIC);
+    return rpi_macaddr_id(options, buffer, mac_oui, RPI_WLAN_XOR_MAGIC);
 }
 
 bool rpi_eth0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
     uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI_OUI;
-    return rpi_macaddr_id(options, buffer, RPI_ETH_XOR_MAGIC);
+    return rpi_macaddr_id(options, buffer, mac_oui, RPI_ETH_XOR_MAGIC);
 }
 
 bool rpi4_wlan0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
     uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI4_OUI;
-    return rpi_macaddr_id(options, buffer, RPI_WLAN_XOR_MAGIC);
+    return rpi_macaddr_id(options, buffer, mac_oui, RPI_WLAN_XOR_MAGIC);
 }
 
 bool rpi4_eth0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
     uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI4_OUI;
-    return rpi_macaddr_id(options, buffer, RPI_ETH_XOR_MAGIC);
+    return rpi_macaddr_id(options, buffer, mac_oui, RPI_ETH_XOR_MAGIC);
 }

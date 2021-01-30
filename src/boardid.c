@@ -54,12 +54,12 @@ static const char *rpi_wlan0_aliases[] = {
 };
 
 static const char *rpi4_eth0_aliases[] = {
-    "rpi_eth0", "Raspberry Pi 4 eth0 MAC address",
+    "rpi4_eth0", "Raspberry Pi 4 eth0 MAC address",
     NULL,       NULL
 };
 
 static const char *rpi4_wlan0_aliases[] = {
-    "rpi_wlan0", "Raspberry Pi 4 wlan0 MAC address",
+    "rpi4_wlan0", "Raspberry Pi 4 wlan0 MAC address",
     NULL,       NULL
 };
 
