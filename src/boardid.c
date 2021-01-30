@@ -43,6 +43,27 @@ static const char *cpuinfo_aliases[] = {
     NULL,       NULL
 };
 
+static const char *rpi_eth0_aliases[] = {
+    "rpi_eth0", "Raspberry Pi (Zero, 1, 2, 3) eth0 MAC address",
+    NULL,       NULL
+};
+
+static const char *rpi_wlan0_aliases[] = {
+    "rpi_wlan0", "Raspberry Pi (Zero, 1, 2, 3) wlan0 MAC address",
+    NULL,       NULL
+};
+
+static const char *rpi4_eth0_aliases[] = {
+    "rpi_eth0", "Raspberry Pi 4 eth0 MAC address",
+    NULL,       NULL
+};
+
+static const char *rpi4_wlan0_aliases[] = {
+    "rpi_wlan0", "Raspberry Pi 4 wlan0 MAC address",
+    NULL,       NULL
+};
+
+
 static const char *device_tree_aliases[] = {
     "jetson",   "nVidia Jetson",
     "device_tree",  "Read /proc/device-tree/serial-number",
@@ -96,6 +117,10 @@ static const char *force_aliases[] = {
 
 static const struct board_id_pair boards[] = {
     { cpuinfo_aliases, cpuinfo_id, true, false },
+    { rpi_eth0_aliases, rpi_eth0_macaddr_id, true, false },
+    { rpi_wlan0_aliases, rpi_wlan0_macaddr_id, true, false },
+    { rpi4_eth0_aliases, rpi4_eth0_macaddr_id, true, false },
+    { rpi4_wlan0_aliases, rpi4_wlan0_macaddr_id, true, false },
     { device_tree_aliases, device_tree_id, true, false },
     { bbb_aliases, beagleboneblack_id, true, false },
     { macaddr_aliases, macaddr_id, true, false },
