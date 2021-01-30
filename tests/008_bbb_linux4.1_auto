@@ -4,6 +4,11 @@
 # Beaglebone w/ Linux 4.1 autodetected
 #
 
+# mock binaries: assume vcmailbox does not exist, the following is to squelch shell output
+mkdir -p $WORK/bin
+ln -s $TESTS_DIR/vcmailbox_none.sh $WORK/bin/vcmailbox
+PATH=$WORK/bin:$PATH
+
 xxd -r - $WORK/sys/bus/i2c/devices/0-0050/at24-0/nvmem <<EOF
 0000000: aa55 33ee 4133 3335 424e 4c54 3041 3542  .U3.A335BNLT0A5B
 0000010: 3233 3133 4242 424b 3030 3939 ffff ffff  2313BBBK0099....

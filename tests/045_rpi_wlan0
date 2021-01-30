@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#
+# Raspberry Pi wlan0 MAC address
+#
+
+# mock binaries
+mkdir -p $WORK/bin
+ln -s $TESTS_DIR/vcmailbox.sh $WORK/bin/vcmailbox
+
+PATH=$WORK/bin:$PATH
+
+CMDLINE="-b rpi_wlan0"
+
+cat >$EXPECTED <<EOF
+1234562dcfe9
+EOF

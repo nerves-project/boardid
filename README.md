@@ -20,6 +20,7 @@ If your board isn't listed above, it may be supported via one of the generic
 mechanisms:
 
 * Reading a serial number from `/proc/cpuinfo`
+* The default Raspberry Pi `eth0` and `wlan0` MAC addresses
 * Reading the MAC address of `eth0`
 * Reading bytes from a file
 * Reading a key from the U-Boot environment
@@ -55,21 +56,25 @@ Options:
 '-b' can be specified multiple times to try more than one method.
 
 Supported boards/methods:
-  rpi        Raspberry Pi (all models)
-  ev3        Lego EV3
-  chip       Next Thing Co - C.H.I.P.
-  cpuinfo    Read /proc/cpuinfo
-  jetson     nVidia Jetson
+  rpi          Raspberry Pi (all models)
+    rpi_eth0   Raspberry Pi (1,2,3)
+    rpi_wlan0  Raspberry Pi (1,2,3)
+    rpi4_eth0    Raspberry Pi 4
+    rpi4_wlan0   Raspberry Pi 4
+  ev3          Lego EV3
+  chip         Next Thing Co - C.H.I.P.
+  cpuinfo      Read /proc/cpuinfo
+  jetson       nVidia Jetson
   device_tree  Read /proc/device-tree/serial-number
-  bbb        Beaglebone Black
-  macaddr    Read eth0's MAC address
-  linkit     LinkIt Smart (WLAN MAC address)
-  binfile    Read '-l' bytes from the file '-f' at offset '-k'
-  uboot_env  Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the variable '-u'
-  atecc508a  Read an ATECC508A (I2C device '-f', I2C address '-a')
-  nerves_key  Read a NervesKey (I2C device '-f', I2C address '-a')
-  dmi        Read the system ID out of the SMBIOS/DMI
-  force      Force the ID (Specify ID with '-f')
+  bbb          Beaglebone Black
+  macaddr      Read eth0's MAC address
+  linkit       LinkIt Smart (WLAN MAC address)
+  binfile      Read '-l' bytes from the file '-f' at offset '-k'
+  uboot_env    Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the variable '-u'
+  atecc508a    Read an ATECC508A (I2C device '-f', I2C address '-a')
+  nerves_key   Read a NervesKey (I2C device '-f', I2C address '-a')
+  dmi          Read the system ID out of the SMBIOS/DMI
+  force        Force the ID (Specify ID with '-f')
 
 Without the `-b` option, `boardid` will try a few methods of determining an ID.
 
