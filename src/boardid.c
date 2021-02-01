@@ -94,6 +94,7 @@ static const char *force_aliases[] = {
     NULL,       NULL
 };
 
+// aliases, read_id, autodetect, trim_left
 static const struct board_id_pair boards[] = {
     { cpuinfo_aliases, cpuinfo_id, true, false },
     { device_tree_aliases, device_tree_id, true, false },
@@ -200,11 +201,13 @@ bool boardid_autodetect(int desired_digits, char *serial_number)
     // Try each board until one works
     const struct board_id_pair *board = boards;
     while (board->read_id) {
-        memset(serial_number, 0, MAX_SERIALNUMBER_LEN + 1);
-        bool worked = board->read_id(&null_options, serial_number);
-        if (worked) {
-            trim_serial_number(serial_number, desired_digits, board->trim_left);
-            return true;
+        if (board->autodetect) {
+            memset(serial_number, 0, MAX_SERIALNUMBER_LEN + 1);
+            bool worked = board->read_id(&null_options, serial_number);
+            if (worked) {
+                trim_serial_number(serial_number, desired_digits, board->trim_left);
+                return true;
+            }
         }
         board++;
     }
