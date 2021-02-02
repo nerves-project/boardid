@@ -50,6 +50,8 @@ run() {
     echo "Running $TEST..."
 
     rm -fr $WORK
+    # mock binaries
+    ln -s vcmailbox.sh $WORK/vcmailbox
     # Create some common directories so that scripts don't need to
     mkdir -p $WORK/dev
     mkdir -p $WORK/etc

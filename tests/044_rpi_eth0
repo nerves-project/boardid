@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#
+# Raspberry Pi eth0 MAC address
+#
+
+CMDLINE="-b rpi_eth0"
+
+cat >$EXPECTED <<EOF
+123456789abc
+EOF
