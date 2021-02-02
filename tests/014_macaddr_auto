@@ -4,6 +4,11 @@
 # MAC Address w/ 4 digits
 #
 
+# mock binaries: assume vcmailbox does not exist, the following is to squelch shell output
+mkdir -p $WORK/bin
+ln -s $TESTS_DIR/vcmailbox_none.sh $WORK/bin/vcmailbox
+PATH=$WORK/bin:$PATH
+
 cat >$WORK/sys/class/net/eth0/address <<EOF
 11:22:33:44:55:66
 EOF
