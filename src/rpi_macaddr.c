@@ -18,82 +18,80 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <byteswap.h>
+
 #include "common.h"
 
-// Compute MAC addresses of builtin network interfaces for RPI based on serial number.
+// Read MAC addresses of wlan0/eth0 via vcmailmox from VC firmware.
 
-#define RPI_OUI {0xB8,0x27,0xEB}
-#define RPI4_OUI {0xDC,0xA6,0x32}
 
-#define RPI_WLAN_XOR_MAGIC  0x55
-#define RPI_ETH_XOR_MAGIC  0x00
+#define RPI_WLAN_XOR_MAGIC  0x555555
+#define RPI_ETH_XOR_MAGIC  	0x000000
 
-#define MAC_ADDR_NUMBYTES  6
-#define MAC_ADDR_OUI_NUMBYTES  3
-#define MAC_ADDR_SER_NUMBYTES  3
+#define RPI4_WLAN_ADD_MAGIC	2
+#define RPI4_ETH_ADD_MAGIC	0
 
-// Helper function to compute the different variations of eth0/wlan0 and RPI/RPI4
-static bool rpi_macaddr_id(const struct boardid_options *options, char *buffer, const uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES], const uint8_t xor_magic)
+
+static bool rpi_macaddr_vc(char* dst, uint32_t xor_magic, uint32_t add_magic)
 {
-    // get the serial number first
-    // it comes as a HEX string
-    char serno_string[MAX_SERIALNUMBER_LEN+1] = "";
-    if (!cpuinfo_id(options, serno_string))
-        return false;
+	bool success = false;
+	if (!dst)
+		return success;
+	FILE* vc_file = popen("vcmailbox 0x00010003 6 6 0 0", "r");
+	if (!vc_file)
+		return success;
 
-    size_t serno_len = strnlen(serno_string, sizeof(serno_string));
+	char* lineptr = NULL;
+	size_t n = 0;
+	ssize_t line_len = getline(&lineptr, &n, vc_file);
 
-    // need at least 6 digits of hex serial number (last 3 bytes used for MAC)
-    if (serno_len < MAC_ADDR_NUMBYTES)
-        return false;
+	if (line_len > 0) {
+		unsigned int  mac0 = 0, mac1 = 0;
+		if (2 == sscanf(lineptr, "0x00000020 0x80000000 0x00010003 0x00000006 0x80000006 0x%8x 0x%8x 0x00000000", &mac0, &mac1)) {
+			if ((mac0 != 0) || (mac1 != 0)) {
+				// read parts are little endian, swap for easier printf
+				uint64_t macaddr_le = ((uint64_t)(mac1 & 0xFFFF) << 32) | mac0;
+				uint64_t macaddr_be = bswap_64(macaddr_le) >> 16;
 
-    uint8_t serno_bytes[MAC_ADDR_SER_NUMBYTES] = {0};
-    hex_to_bin(serno_string + (serno_len - MAC_ADDR_SER_NUMBYTES*2), MAC_ADDR_SER_NUMBYTES, serno_bytes);
+				// apply magic numbers
+				macaddr_be = macaddr_be ^ xor_magic;
+				macaddr_be = macaddr_be + add_magic;
 
+				snprintf(dst, MAX_SERIALNUMBER_LEN, "%06llx", macaddr_be);
+				success = true;
+			}
+		}
+	}
 
-    uint8_t mac_bytes[MAC_ADDR_NUMBYTES] = {0};
-    // fill in OUI part of MAC address
-    memcpy(mac_bytes, mac_oui, MAC_ADDR_OUI_NUMBYTES);
+	// popen() malloc'd lineptr buffer, we have to free it after we're done with it
+	if (lineptr)
+		free(lineptr);
 
-    // fill in ser number part of MAC address
-    for (size_t i = 0; i < sizeof(serno_bytes); ++i) {
-        mac_bytes[MAC_ADDR_OUI_NUMBYTES + i] = xor_magic ^ serno_bytes[i];
-    }
+	pclose(vc_file);
 
-    char mac_string[MAC_ADDR_NUMBYTES*2+1] = "";
-    bin_to_hex(mac_bytes, MAC_ADDR_NUMBYTES, mac_string);
-
-    // Copy the serial number to the output buffer
-    int digits = MAC_ADDR_NUMBYTES*2; //
-    if (digits > MAX_SERIALNUMBER_LEN)
-        digits = MAX_SERIALNUMBER_LEN;
-
-    memcpy(buffer, mac_string, digits);
-    buffer[digits] = '\0';
-
-    return true;
+	return success;
 }
+
 
 bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
-    uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI_OUI;
-    return rpi_macaddr_id(options, buffer, mac_oui, RPI_WLAN_XOR_MAGIC);
+	return rpi_macaddr_vc(buffer, RPI_WLAN_XOR_MAGIC, 0);
 }
+
 
 bool rpi_eth0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
-    uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI_OUI;
-    return rpi_macaddr_id(options, buffer, mac_oui, RPI_ETH_XOR_MAGIC);
+    return rpi_macaddr_vc(buffer, RPI_ETH_XOR_MAGIC, 0);
 }
+
 
 bool rpi4_wlan0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
-    uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI4_OUI;
-    return rpi_macaddr_id(options, buffer, mac_oui, RPI_WLAN_XOR_MAGIC);
+    return rpi_macaddr_vc(buffer, 0, RPI4_WLAN_ADD_MAGIC);
 }
+
 
 bool rpi4_eth0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
-    uint8_t mac_oui[MAC_ADDR_OUI_NUMBYTES] = RPI4_OUI;
-    return rpi_macaddr_id(options, buffer, mac_oui, RPI_ETH_XOR_MAGIC);
+    return rpi_macaddr_vc(buffer, 0, RPI4_ETH_ADD_MAGIC);
 }
