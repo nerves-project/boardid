@@ -26,56 +26,59 @@
 
 
 #define RPI_WLAN_XOR_MAGIC  0x555555
-#define RPI_ETH_XOR_MAGIC  	0x000000
+#define RPI_ETH_XOR_MAGIC   0x000000
 
-#define RPI4_WLAN_ADD_MAGIC	2
-#define RPI4_ETH_ADD_MAGIC	0
+#define RPI4_WLAN_ADD_MAGIC 2
+#define RPI4_ETH_ADD_MAGIC  0
 
-
+// XOR and ADD magic numbers only affect the last 3 bytes of the MAC address, not the first 3 OUI bytes
+// return true when the MAC could be read from vcmailbox, false otherwise
 static bool rpi_macaddr_vc(char* dst, uint32_t xor_magic, uint32_t add_magic)
 {
-	bool success = false;
-	if (!dst)
-		return success;
-	FILE* vc_file = popen("vcmailbox 0x00010003 6 6 0 0", "r");
-	if (!vc_file)
-		return success;
+    bool success = false;
+    if (!dst)
+        return success;
 
-	char* lineptr = NULL;
-	size_t n = 0;
-	ssize_t line_len = getline(&lineptr, &n, vc_file);
+    FILE* vc_file = popen("vcmailbox 0x00010003 6 6 0 0", "r");
+    if (!vc_file)
+        return success;
 
-	if (line_len > 0) {
-		unsigned int  mac0 = 0, mac1 = 0;
-		if (2 == sscanf(lineptr, "0x00000020 0x80000000 0x00010003 0x00000006 0x80000006 0x%8x 0x%8x 0x00000000", &mac0, &mac1)) {
-			if ((mac0 != 0) || (mac1 != 0)) {
-				// read parts are little endian, swap for easier printf
-				uint64_t macaddr_le = ((uint64_t)(mac1 & 0xFFFF) << 32) | mac0;
-				uint64_t macaddr_be = bswap_64(macaddr_le) >> 16;
+    char* lineptr = NULL;
+    size_t n = 0;
+    ssize_t line_len = getline(&lineptr, &n, vc_file);
 
-				// apply magic numbers
-				macaddr_be = macaddr_be ^ xor_magic;
-				macaddr_be = macaddr_be + add_magic;
+    if (line_len > 0) {
+        unsigned int  mac0 = 0, mac1 = 0;
+        if (2 == sscanf(lineptr, "0x00000020 0x80000000 0x00010003 0x00000006 0x80000006 0x%8x 0x%8x 0x00000000", &mac0, &mac1)) {
+            if ((mac0 != 0) || (mac1 != 0)) {
+                // read parts are little endian, swap for easier printf
+                uint64_t macaddr_le = ((uint64_t)(mac1 & 0xFFFF) << 32) | mac0;
+                uint64_t macaddr = bswap_64(macaddr_le) >> 16;
 
-				snprintf(dst, MAX_SERIALNUMBER_LEN, "%06llx", macaddr_be);
-				success = true;
-			}
-		}
-	}
+                // apply magic numbers
+                macaddr = macaddr ^ (xor_magic & 0xFFFFFF);
+                // make sure the additive magic number does not affect the OUI part of the MAC
+                macaddr = (macaddr & 0xFFFFFF000000) | ((macaddr + add_magic) & 0xFFFFFF);
 
-	// popen() malloc'd lineptr buffer, we have to free it after we're done with it
-	if (lineptr)
-		free(lineptr);
+                snprintf(dst, MAX_SERIALNUMBER_LEN, "%06llx", macaddr);
+                success = true;
+            }
+        }
+    }
 
-	pclose(vc_file);
+    // popen() malloc'd lineptr buffer, we have to free it after we're done with it
+    if (lineptr)
+        free(lineptr);
 
-	return success;
+    pclose(vc_file);
+
+    return success;
 }
 
 
 bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer)
 {
-	return rpi_macaddr_vc(buffer, RPI_WLAN_XOR_MAGIC, 0);
+    return rpi_macaddr_vc(buffer, RPI_WLAN_XOR_MAGIC, 0);
 }
 
 
