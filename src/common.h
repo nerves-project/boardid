@@ -35,7 +35,6 @@
 
 FILE *fopen_helper(const char *filename, const char *mode);
 void bin_to_hex(const uint8_t *input, size_t len, char *output);
-void hex_to_bin(const char *input, size_t len, uint8_t *output);
 void merge_config(int argc, char *argv[], int *merged_argc, char **merged_argv, int max_args);
 
 struct boardid_options
@@ -54,8 +53,6 @@ struct boardid_options
 bool cpuinfo_id(const struct boardid_options *options, char *buffer);
 bool rpi_eth0_macaddr_id(const struct boardid_options *options, char *buffer);
 bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer);
-bool rpi4_eth0_macaddr_id(const struct boardid_options *options, char *buffer);
-bool rpi4_wlan0_macaddr_id(const struct boardid_options *options, char *buffer);
 bool device_tree_id(const struct boardid_options *options, char *buffer);
 bool macaddr_id(const struct boardid_options *options, char *buffer);
 bool beagleboneblack_id(const struct boardid_options *options, char *buffer);
