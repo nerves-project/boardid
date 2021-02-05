@@ -4,11 +4,6 @@
 # Check that the device-tree is an automatically checked location
 #
 
-# mock binaries: assume vcmailbox does not exist, the following is to squelch shell output
-mkdir -p $WORK/bin
-ln -s $TESTS_DIR/vcmailbox_none.sh $WORK/bin/vcmailbox
-PATH=$WORK/bin:$PATH
-
 mkdir -p "$WORK/proc/device-tree"
 cat >"$WORK/proc/device-tree/serial-number" << EOF
 0421519091609
