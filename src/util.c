@@ -43,10 +43,3 @@ void bin_to_hex(const uint8_t *input, size_t len, char *output)
         sprintf(&output[i * 2], "%02x", input[i]);
 }
 
-void hex_to_bin(const char *input, size_t len, uint8_t *output)
-{
-    for (size_t i = 0; i < len; i++) {
-        sscanf(input + (i * 2), "%02hhx", output + i);
-    }
-}
-

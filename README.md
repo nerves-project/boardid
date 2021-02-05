@@ -57,10 +57,8 @@ Options:
 
 Supported boards/methods:
   rpi          Raspberry Pi (all models)
-    rpi_eth0   Raspberry Pi (1,2,3)
-    rpi_wlan0  Raspberry Pi (1,2,3)
-    rpi4_eth0    Raspberry Pi 4
-    rpi4_wlan0   Raspberry Pi 4
+    rpi_eth0   Raspberry Pi eth0 MAC address
+    rpi_wlan0  Raspberry Pi wlan0 MAC address
   ev3          Lego EV3
   chip         Next Thing Co - C.H.I.P.
   cpuinfo      Read /proc/cpuinfo
