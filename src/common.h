@@ -54,8 +54,6 @@ struct boardid_options
 bool cpuinfo_id(const struct boardid_options *options, char *buffer);
 bool rpi_eth0_macaddr_id(const struct boardid_options *options, char *buffer);
 bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer);
-bool rpi4_eth0_macaddr_id(const struct boardid_options *options, char *buffer);
-bool rpi4_wlan0_macaddr_id(const struct boardid_options *options, char *buffer);
 bool device_tree_id(const struct boardid_options *options, char *buffer);
 bool macaddr_id(const struct boardid_options *options, char *buffer);
 bool beagleboneblack_id(const struct boardid_options *options, char *buffer);

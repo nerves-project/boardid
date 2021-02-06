@@ -44,25 +44,14 @@ static const char *cpuinfo_aliases[] = {
 };
 
 static const char *rpi_eth0_aliases[] = {
-    "rpi_eth0", "Raspberry Pi (Zero, 1, 2, 3) eth0 MAC address",
+    "rpi_eth0", "Raspberry Pi eth0 MAC address",
     NULL,       NULL
 };
 
 static const char *rpi_wlan0_aliases[] = {
-    "rpi_wlan0", "Raspberry Pi (Zero, 1, 2, 3) wlan0 MAC address",
+    "rpi_wlan0", "Raspberry Pi wlan0 MAC address",
     NULL,       NULL
 };
-
-static const char *rpi4_eth0_aliases[] = {
-    "rpi4_eth0", "Raspberry Pi 4 eth0 MAC address",
-    NULL,       NULL
-};
-
-static const char *rpi4_wlan0_aliases[] = {
-    "rpi4_wlan0", "Raspberry Pi 4 wlan0 MAC address",
-    NULL,       NULL
-};
-
 
 static const char *device_tree_aliases[] = {
     "jetson",   "nVidia Jetson",
@@ -115,12 +104,11 @@ static const char *force_aliases[] = {
     NULL,       NULL
 };
 
+// aliases, read_id, autodetect, trim_left
 static const struct board_id_pair boards[] = {
     { cpuinfo_aliases, cpuinfo_id, true, false },
-    { rpi_eth0_aliases, rpi_eth0_macaddr_id, true, false },
-    { rpi_wlan0_aliases, rpi_wlan0_macaddr_id, true, false },
-    { rpi4_eth0_aliases, rpi4_eth0_macaddr_id, true, false },
-    { rpi4_wlan0_aliases, rpi4_wlan0_macaddr_id, true, false },
+    { rpi_eth0_aliases, rpi_eth0_macaddr_id, false, false },
+    { rpi_wlan0_aliases, rpi_wlan0_macaddr_id, false, false },
     { device_tree_aliases, device_tree_id, true, false },
     { bbb_aliases, beagleboneblack_id, true, false },
     { macaddr_aliases, macaddr_id, true, false },
@@ -225,11 +213,13 @@ bool boardid_autodetect(int desired_digits, char *serial_number)
     // Try each board until one works
     const struct board_id_pair *board = boards;
     while (board->read_id) {
-        memset(serial_number, 0, MAX_SERIALNUMBER_LEN + 1);
-        bool worked = board->read_id(&null_options, serial_number);
-        if (worked) {
-            trim_serial_number(serial_number, desired_digits, board->trim_left);
-            return true;
+        if (board->autodetect) {
+            memset(serial_number, 0, MAX_SERIALNUMBER_LEN + 1);
+            bool worked = board->read_id(&null_options, serial_number);
+            if (worked) {
+                trim_serial_number(serial_number, desired_digits, board->trim_left);
+                return true;
+            }
         }
         board++;
     }
