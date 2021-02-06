@@ -56,7 +56,7 @@ static bool vc_read_mac_address(uint8_t *mac_address)
 
 static bool rpi_macaddr_id(char *buffer, bool wlan0)
 {
-    uint8_t mac_address[6];
+    uint8_t mac_address[6] = {0};
     if (!vc_read_mac_address(mac_address))
         return false;
 
@@ -78,16 +78,17 @@ static bool rpi_macaddr_id(char *buffer, bool wlan0)
         // Disclaimer: I couldn't find anything official to say that any of
         // this is true, but it seems to be so far.
 
-        if (mac_address[3] == 0xb8 && mac_address[4] == 0x27 && mac_address[5] == 0xeb) {
-            mac_address[3] ^= 0xff;
-            mac_address[4] ^= 0xff;
-            mac_address[5] ^= 0xff;
+        uint8_t rpi_oui[3] = {0xB8, 0x27, 0xEB};
+        if (0 == memcmp(mac_address, rpi_oui, sizeof(rpi_oui))) {
+            mac_address[3] ^= 0x55;
+            mac_address[4] ^= 0x55;
+            mac_address[5] ^= 0x55;
         } else {
-            int v = (mac_address[3] << 16) | (mac_address[3] << 8) | mac_address[5];
-            v++;
-            mac_address[3] = (v >> 16) & 0xff;
-            mac_address[4] = (v >> 8) & 0xff;
-            mac_address[5] = v & 0xff;
+            uint32_t v = (mac_address[3] << 16) | (mac_address[4] << 8) | mac_address[5];
+            v += 1;
+            mac_address[3] = v >> 16;
+            mac_address[4] = v >> 8;
+            mac_address[5] = v >> 0;
         }
     }
 
