@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.11.0
+
+* New features
+  * Support returning a Raspberry Pi's eth0 or wlan0 MAC address based on
+    querying the VideoCore. Ethernet and WiFi drivers don't need to be loaded
+    for this to work. Thanks to Dömötör Gulyás for helping add this feature.
+
 ## v1.10.0
 
 * New features
