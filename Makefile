@@ -6,7 +6,7 @@ SRCS = $(wildcard src/*.c)
 all: boardid
 
 boardid: $(SRCS)
-	$(CC) -Wall -O2 -DPROGRAM_VERSION=$(VERSION) -o $@ $^
+	$(CC) $(CFLAGS) $(LDFLAGS) -Wall -DPROGRAM_VERSION=$(VERSION) -o $@ $^
 
 check: boardid
 	tests/run_tests.sh
