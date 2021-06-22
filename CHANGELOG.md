@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.11.1
+
+* Bug fixes
+  * Allow custom CFLAGS and LDFLAGS to be passed in. This enables build systems
+    to pass platform-specific build options.
+
 ## v1.11.0
 
 * New features
