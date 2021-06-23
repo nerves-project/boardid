@@ -22,7 +22,7 @@ case "$HOST_OS" in
         # Not -d?
         BASE64_DECODE=-D
 
-        READLINK=/usr/local/bin/greadlink
+        READLINK=$(brew --prefix)/bin/greadlink
         [ -e $READLINK ] || ( echo "Please run 'brew install coreutils' to install greadlink"; exit 1 )
         ;;
     *)
