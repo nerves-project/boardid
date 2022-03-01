@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.12.0
+
+* New features
+  * Support reading serial numbers from GRiSP2's onboard manufacturing
+    information EEPROM
+
 ## v1.11.1
 
 * Bug fixes
