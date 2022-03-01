@@ -55,6 +55,7 @@ run() {
     mkdir -p $WORK/etc
     mkdir -p $WORK/proc
     mkdir -p $WORK/sys/bus/i2c/devices/0-0050/at24-0
+    mkdir -p $WORK/sys/bus/i2c/devices/0-0057
     mkdir -p $WORK/sys/class/net/eth0
     mkdir -p $WORK/sys/class/net/eth1
     mkdir -p $WORK/sys/class/net/lo0

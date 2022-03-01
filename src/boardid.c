@@ -99,6 +99,11 @@ static const char *dmi_aliases[] = {
     NULL,       NULL
 };
 
+static const char *grisp_aliases[] = {
+    "grisp",      "GRiSP",
+    NULL,       NULL
+};
+
 static const char *force_aliases[] = {
     "force",  "Force the ID (Specify ID with '-f')",
     NULL,       NULL
@@ -106,19 +111,20 @@ static const char *force_aliases[] = {
 
 // aliases, read_id, autodetect, trim_left
 static const struct board_id_pair boards[] = {
-    { cpuinfo_aliases, cpuinfo_id, true, false },
-    { rpi_eth0_aliases, rpi_eth0_macaddr_id, false, false },
-    { rpi_wlan0_aliases, rpi_wlan0_macaddr_id, false, false },
-    { device_tree_aliases, device_tree_id, true, false },
-    { bbb_aliases, beagleboneblack_id, true, false },
-    { macaddr_aliases, macaddr_id, true, false },
-    { linkit_aliases, linkit_id, true, false },
-    { binfile_aliases, binfile_id, false, false },
-    { uboot_env_aliases, uboot_env_id, false, true},
     { atecc508a_aliases, atecc508a_id, false, false },
-    { nerves_key_aliases, nerves_key_id, false, false },
+    { bbb_aliases, beagleboneblack_id, true, false },
+    { binfile_aliases, binfile_id, false, false },
+    { cpuinfo_aliases, cpuinfo_id, true, false },
+    { device_tree_aliases, device_tree_id, true, false },
     { dmi_aliases, dmi_id, true, false },
     { force_aliases, force_id, false, true },
+    { grisp_aliases, grisp_id, true, false },
+    { linkit_aliases, linkit_id, true, false },
+    { macaddr_aliases, macaddr_id, true, false },
+    { nerves_key_aliases, nerves_key_id, false, false },
+    { rpi_eth0_aliases, rpi_eth0_macaddr_id, false, false },
+    { rpi_wlan0_aliases, rpi_wlan0_macaddr_id, false, false },
+    { uboot_env_aliases, uboot_env_id, false, true},
     { NULL, NULL, false, false }
 };
 

@@ -50,19 +50,20 @@ struct boardid_options
     int i2c_address;
 };
 
-bool cpuinfo_id(const struct boardid_options *options, char *buffer);
-bool rpi_eth0_macaddr_id(const struct boardid_options *options, char *buffer);
-bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer);
-bool device_tree_id(const struct boardid_options *options, char *buffer);
-bool macaddr_id(const struct boardid_options *options, char *buffer);
-bool beagleboneblack_id(const struct boardid_options *options, char *buffer);
-bool linkit_id(const struct boardid_options *options, char *buffer);
-bool binfile_id(const struct boardid_options *options, char *buffer);
-bool uboot_env_id(const struct boardid_options *options, char *buffer);
 bool atecc508a_id(const struct boardid_options *options, char *buffer);
-bool nerves_key_id(const struct boardid_options *options, char *buffer);
+bool beagleboneblack_id(const struct boardid_options *options, char *buffer);
+bool binfile_id(const struct boardid_options *options, char *buffer);
+bool cpuinfo_id(const struct boardid_options *options, char *buffer);
+bool device_tree_id(const struct boardid_options *options, char *buffer);
 bool dmi_id(const struct boardid_options *options, char *buffer);
 bool force_id(const struct boardid_options *options, char *buffer);
+bool grisp_id(const struct boardid_options *options, char *buffer);
+bool linkit_id(const struct boardid_options *options, char *buffer);
+bool macaddr_id(const struct boardid_options *options, char *buffer);
+bool nerves_key_id(const struct boardid_options *options, char *buffer);
+bool rpi_eth0_macaddr_id(const struct boardid_options *options, char *buffer);
+bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer);
+bool uboot_env_id(const struct boardid_options *options, char *buffer);
 
 // The root prefix is used for unit testing so that simulated /proc or /sys
 // files can be used.
