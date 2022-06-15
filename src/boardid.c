@@ -145,6 +145,7 @@ static void usage()
     printf("  -p <string>       Prefix an ID with the specific string\n");
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
     printf("  -a <i2c address>  I2C bus address\n");
+    printf("  -X                Print capital hex digits for `binfile`/`atecc508a` methods");
     printf("  -v                Print out the program version\n");
     printf("\n");
     printf("'-b' can be specified multiple times to try more than one method.\n");
@@ -283,7 +284,7 @@ int main(int argc, char *argv[])
     merge_config(argc, argv, &merged_argc, merged_argv, MAX_ARGC);
 
     int opt;
-    while ((opt = getopt(merged_argc, merged_argv, "a:b:f:k:l:n:p:r:vu:?")) != -1) {
+    while ((opt = getopt(merged_argc, merged_argv, "a:b:f:k:l:n:p:r:vu:X?")) != -1) {
         switch (opt) {
         case 'b':
             current_set++;
@@ -352,6 +353,12 @@ int main(int argc, char *argv[])
             if (current_set < 0)
                 errx(EXIT_FAILURE, "Specify '-b' first");
             options[current_set].id_options.uenv_varname = optarg;
+            break;
+
+        case 'X':
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].id_options.capital_hex = 1;
             break;
 
         case '?':

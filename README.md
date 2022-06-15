@@ -51,6 +51,7 @@ Options:
   -p <string>       Prefix an ID with the specific string
   -a <i2c address>  I2C address for the `atecc508a`/`nerves_key` methods
   -r <prefix>       Root directory prefix (used for unit tests)
+  -X                Print capital hex digits for `binfile`/`atecc508a` methods
   -v                Print out the program version
 
 '-b' can be specified multiple times to try more than one method.

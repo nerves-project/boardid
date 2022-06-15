@@ -34,7 +34,7 @@
 #define PROGRAM_VERSION_STR xstr(PROGRAM_VERSION)
 
 FILE *fopen_helper(const char *filename, const char *mode);
-void bin_to_hex(const uint8_t *input, size_t len, char *output);
+void bin_to_hex(const uint8_t *input, size_t len, int capital_hex, char *output);
 void merge_config(int argc, char *argv[], int *merged_argc, char **merged_argv, int max_args);
 
 struct boardid_options
@@ -47,6 +47,7 @@ struct boardid_options
     int offset;
     int size;
     const char *uenv_varname;
+    int capital_hex;
     int i2c_address;
 };
 

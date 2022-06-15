@@ -44,7 +44,7 @@ bool binfile_id(const struct boardid_options *options, char *buffer)
 
     fclose(fp);
 
-    bin_to_hex(data, idlen, buffer);
+    bin_to_hex(data, idlen, options->capital_hex, buffer);
     buffer[idlen * 2] = '\0';
 
     return true;

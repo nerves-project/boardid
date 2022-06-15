@@ -45,7 +45,7 @@ bool atecc508a_id(const struct boardid_options *options, char *buffer)
     atecc508a_close(&atecc);
 
     char serial_number_hex[sizeof(serial_number) * 2 + 1];
-    bin_to_hex(serial_number, sizeof(serial_number), serial_number_hex);
+    bin_to_hex(serial_number, sizeof(serial_number), options->capital_hex, serial_number_hex);
 
     // The ATECC508A has a 18 character serial number (9 bytes)
     memcpy(buffer, serial_number_hex, sizeof(serial_number_hex));

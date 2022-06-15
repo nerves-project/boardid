@@ -37,9 +37,10 @@ FILE *fopen_helper(const char *filename, const char *mode)
     }
 }
 
-void bin_to_hex(const uint8_t *input, size_t len, char *output)
+void bin_to_hex(const uint8_t *input, size_t len, int capital_hex, char *output)
 {
+    const char *format = capital_hex ? "%02X" : "%02x";
     for (size_t i = 0; i < len; i++)
-        sprintf(&output[i * 2], "%02x", input[i]);
+        sprintf(&output[i * 2], format, input[i]);
 }
 
