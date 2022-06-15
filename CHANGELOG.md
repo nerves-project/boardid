@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.13.0
+
+* New features
+  * Add `-X` option to capitalize hex digits when converting them from binary.
+    This works with the `binfile` and `atecc508a` methods since those are the
+    only two methods that run binary to hex conversions.
+
 ## v1.12.0
 
 * New features
