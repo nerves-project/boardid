@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.13.1
+
+* Bug fixes
+  * Improve ATECC retry logic to retry on a transient I2C read failure as well
+    as an unexpected response. This also doubles the ATECC wakeup retries to
+    4 and increases the retry timeout from 1.5 ms to 10 ms. This works around
+    a rare issue where an I2C failure that only seems to happen at boot causes
+    the serial number to not be readable.
+
 ## v1.13.0
 
 * New features
