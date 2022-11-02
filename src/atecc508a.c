@@ -32,6 +32,7 @@
 #include "atecc508a.h"
 
 #define ATECC508A_WAKE_DELAY_US 1500
+#define ATECC508A_RETRY_US 10000
 
 #include <err.h>
 #define ERROR warnx
@@ -197,7 +198,10 @@ void atecc508a_close(struct atecc508a_session *session)
 
 int atecc508a_wakeup(const struct atecc508a_session *session)
 {
-    for (int i = 0; i < 2; i++) {
+    uint8_t buffer[4];
+    const int retries = 4;
+
+    for (int i = 0; i < retries; i++) {
         // See ATECC508A 6.1 for the wakeup sequence.
         //
         // Write to address 0 to pull SDA down for the wakeup interval (60 uS).
@@ -210,28 +214,24 @@ int atecc508a_wakeup(const struct atecc508a_session *session)
         microsleep(ATECC508A_WAKE_DELAY_US);
 
         // Check that it's awake by reading its signature
-        uint8_t buffer[4];
-        if (i2c_read(session->fd, session->addr, buffer, sizeof(buffer)) < 0) {
-            ERROR("Can't wakeup ATECC508A");
-            return -1;
+        if (i2c_read(session->fd, session->addr, buffer, sizeof(buffer)) >= 0) {
+            if (buffer[0] == 0x04 &&
+                buffer[1] == 0x11 &&
+                buffer[2] == 0x33 &&
+                buffer[3] == 0x43) {
+                // Success
+                return 0;
+            }
         }
 
-        if (buffer[0] == 0x04 &&
-            buffer[1] == 0x11 &&
-            buffer[2] == 0x33 &&
-            buffer[3] == 0x43) {
-            // Success
-            return 0;
-        }
-
-        ERROR("Unexpected ATECC508A wakeup response: %02x%02x%02x%02x", buffer[0], buffer[1], buffer[2], buffer[3]);
-
-        // Maybe the device is already awake due to an error. Try sleeping it
-        // and possibly trying again
+        // Maybe the device is already awake due to an error in a previous
+        // command. This could be ok. Try sleeping it and retrying the
+        // wakeup.
         atecc508a_sleep(session);
-        microsleep(ATECC508A_WAKE_DELAY_US);
+        microsleep(ATECC508A_RETRY_US);
     }
-    ERROR("No ATECC508A or it's in a really bad state");
+    ERROR("Giving up on ATECC@0x%02x. Wakeup failed %d times (%02x%02x%02x%02x).",
+        session->addr, retries, buffer[0], buffer[1], buffer[2], buffer[3]);
     return -1;
 }
 
