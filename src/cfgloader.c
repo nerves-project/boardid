@@ -121,7 +121,7 @@ void merge_config(int argc, char *argv[], int *merged_argc, char **merged_argv, 
                                 max_args - argc);
 
     if (*merged_argc == max_args)
-        warn("Too many arguments specified between the config file and commandline. Dropping some.");
+        warnx("Dropping excess commandline/config arguments. Max is %d.", max_args);
 }
 
 
