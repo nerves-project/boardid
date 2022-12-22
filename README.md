@@ -1,6 +1,7 @@
 # boardid
 
 [![CircleCI](https://circleci.com/gh/nerves-project/boardid.svg?style=svg)](https://circleci.com/gh/nerves-project/boardid)
+[![REUSE status](https://api.reuse.software/badge/github.com/nerves-project/boardid)](https://api.reuse.software/info/github.com/nerves-project/boardid)
 
 This program looks up a device-specific serial number and prints it. The
 original use was to provide some non-changing and unique material for
