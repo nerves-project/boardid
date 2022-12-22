@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 1986 Gary S. Brown
+//
+// SPDX-License-Identifier: CC0-1.0
+
 #include "crc32.h"
 
 // See https://github.com/panzi/CRC-and-checksum-functions

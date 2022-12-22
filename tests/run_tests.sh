@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# SPDX-FileCopyrightText: 2020 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
+
 set -e
 
 export LC_ALL=C

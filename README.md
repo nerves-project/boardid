@@ -117,3 +117,17 @@ is not unheard of for board manufacturers to accidentally reuse IDs or forget to
 program them entirely. Additionally, these IDs may even be guessable so using
 them in a cryptographic sense is not advised without an understanding for how
 they're assigned.
+
+## License
+
+This work is licensed under multiple licenses. Individual files are labeled
+following the [REUSE recommendations](https://reuse.software).
+
+For following summarizes the licensing:
+
+* All original source code is licensed under Apache-2.0
+* CRC32 calculation code states "You may use this program, or code or tables
+  extracted from it, as desired without restriction."
+* Configuration and data files are licensed under CC0-1.0
+* Documentation is CC-BY-4.0
+

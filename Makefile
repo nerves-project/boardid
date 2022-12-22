@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2020 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
 
 VERSION=1.13.1
 

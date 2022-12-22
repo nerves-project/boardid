@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2022 Nerves Project Developers
+//
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef CRC32_H
 #define CRC32_H
 

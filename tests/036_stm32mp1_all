@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2020 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
+
 #
 # Verify that STM32MP1 serial numbers work. They're 24 hex digits long
 # which makes them longer than most other devices.

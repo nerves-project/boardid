@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# SPDX-FileCopyrightText: 2020 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
+
 #
 # Beaglebone w/ Linux 4.1 w/ all digits
 #
