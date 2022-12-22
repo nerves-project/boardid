@@ -2,11 +2,11 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/elixir:1.7
+      - image: cimg/base:2022.12
 
-    working_directory: ~/repo
     steps:
       - checkout
-      - run: sudo apt install xxd -qq
+      - run: sudo apt-get update && sudo apt-get install -y xxd reuse
       - run: make
       - run: make check
+      - run: reuse lint
