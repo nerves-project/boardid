@@ -97,6 +97,11 @@ static const char *force_aliases[] = {
     NULL,       NULL
 };
 
+static const char *script_aliases[] = {
+    "script", "Run a script to get the ID (Specify script with '-f')",
+    NULL,       NULL
+};
+
 // aliases, read_id, autodetect, trim_left
 static const struct board_id_pair boards[] = {
     { atecc508a_aliases, atecc508a_id, false, false },
@@ -112,6 +117,7 @@ static const struct board_id_pair boards[] = {
     { nerves_key_aliases, nerves_key_id, false, false },
     { rpi_eth0_aliases, rpi_eth0_macaddr_id, false, false },
     { rpi_wlan0_aliases, rpi_wlan0_macaddr_id, false, false },
+    { script_aliases, script_id, false, false},
     { uboot_env_aliases, uboot_env_id, false, true},
     { NULL, NULL, false, false }
 };
