@@ -52,6 +52,7 @@ bool macaddr_id(const struct boardid_options *options, char *buffer);
 bool nerves_key_id(const struct boardid_options *options, char *buffer);
 bool rpi_eth0_macaddr_id(const struct boardid_options *options, char *buffer);
 bool rpi_wlan0_macaddr_id(const struct boardid_options *options, char *buffer);
+bool script_id(const struct boardid_options * options, char *buffer);
 bool uboot_env_id(const struct boardid_options *options, char *buffer);
 
 // The root prefix is used for unit testing so that simulated /proc or /sys
