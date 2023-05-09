@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-VERSION=1.13.1
+VERSION=1.14.0
 
 SRCS = $(wildcard src/*.c)
 

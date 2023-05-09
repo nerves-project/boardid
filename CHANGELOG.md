@@ -1,5 +1,14 @@
 # Changelog
 
+## v1.14.0
+
+* New features
+  * Add `-b script` option to support running an external script or program to
+    supply the serial number. This is useful for including proprietary ID code
+    in with other boardid options. Thanks to Jon Ringle for this feature.
+  * Improve `-b bbb` to support reading the updated Beagleboard EEPROM format
+    used on the BeaglePlay.
+
 ## v1.13.1
 
 * Bug fixes
