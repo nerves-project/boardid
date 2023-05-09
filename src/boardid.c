@@ -48,7 +48,7 @@ static const char *device_tree_aliases[] = {
 };
 
 static const char *bbb_aliases[] = {
-    "bbb",      "Beaglebone Black",
+    "bbb",      "Beaglebone and BeaglePlay",
     NULL,       NULL
 };
 
@@ -139,7 +139,7 @@ static void usage()
     printf("  -p <string>       Prefix an ID with the specific string\n");
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
     printf("  -a <i2c address>  I2C bus address\n");
-    printf("  -X                Print capital hex digits for `binfile`/`atecc508a` methods");
+    printf("  -X                Print capital hex digits for `binfile`/`atecc508a` methods\n");
     printf("  -v                Print out the program version\n");
     printf("\n");
     printf("'-b' can be specified multiple times to try more than one method.\n");
