@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# SPDX-FileCopyrightText: 2023 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#
+# Test script outputing too much. Result should max out at 31 characters.
+#
+
+cat >$WORK/etc/my_serial <<EOF
+#!/bin/sh
+
+printf "0123456789"
+printf "0123456789"
+printf "0123456789"
+printf "0123456789"
+printf "0123456789"
+printf "0123456789"
+printf "0123456789"
+printf "0123456789"
+EOF
+chmod +x $WORK/etc/my_serial
+
+CMDLINE="-b script -f $WORK/etc/my_serial"
+
+cat >$EXPECTED <<EOF
+01234567890123456789012345678901
+EOF
