@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# SPDX-FileCopyrightText: 2023 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#
+# Script that prints something but returns error should fail
+#
+
+cat >$WORK/etc/my_serial <<EOF
+#!/bin/sh
+
+printf "12345678"
+exit 1
+EOF
+chmod +x $WORK/etc/my_serial
+
+CMDLINE="-b script -f $WORK/etc/my_serial"
+
+cat >$EXPECTED <<EOF
+00000000000000000000000000000000
+EOF

@@ -28,7 +28,7 @@ bool script_id(const struct boardid_options *options, char *buffer)
 
     if (pid == 0) {
         // child
-        int devnull = open("/dev/null", O_RDWR);
+        int devnull = open("/dev/null", O_RDONLY);
         if (devnull < 0)
             exit(EXIT_FAILURE);
 
@@ -40,6 +40,7 @@ bool script_id(const struct boardid_options *options, char *buffer)
         dup2(pipefd[1], STDOUT_FILENO);
         dup2(pipefd[1], STDERR_FILENO);
         close(devnull);
+        close(pipefd[1]);
 
         char* argv[] = {
             (char*)options->filename,

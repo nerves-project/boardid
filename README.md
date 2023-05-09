@@ -74,6 +74,7 @@ Supported boards/methods:
   atecc508a    Read an ATECC508A (I2C device '-f', I2C address '-a')
   nerves_key   Read a NervesKey (I2C device '-f', I2C address '-a')
   dmi          Read the system ID out of the SMBIOS/DMI
+  script       Run a script to get the ID (Specify script with '-f')
   force        Force the ID (Specify ID with '-f')
 
 Without the `-b` option, `boardid` will try a few methods of determining an ID.

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# SPDX-FileCopyrightText: 2023 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#
+# Test that reading from stdin in the script doesn't hang
+#
+
+cat >$WORK/etc/my_serial <<EOF
+#!/bin/sh
+
+read bad_script
+cat >$WORK/testing
+
+printf "23456781"
+EOF
+chmod +x $WORK/etc/my_serial
+
+CMDLINE="-b script -f $WORK/etc/my_serial"
+
+cat >$EXPECTED <<EOF
+23456781
+EOF

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# SPDX-FileCopyrightText: 2023 Nerves Project Developers
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#
+# Script that outputs the serial number in pieces
+#
+
+cat >$WORK/etc/my_serial <<EOF
+#!/bin/sh
+
+printf "1"
+printf "2"
+printf "3"
+printf "4"
+printf "5"
+printf "6"
+printf "7"
+printf "8"
+EOF
+chmod +x $WORK/etc/my_serial
+
+CMDLINE="-b script -f $WORK/etc/my_serial"
+
+cat >$EXPECTED <<EOF
+12345678
+EOF
