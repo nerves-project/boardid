@@ -10,7 +10,7 @@ dynamically creating device names on a local LAN.
 Supported boards:
 
 * Raspberry Pi (all varieties)
-* [BeagleBone Black (all varieties)](http://beagleboard.org/)
+* [BeagleBone (all varieties) and BeaglePlay](http://beagleboard.org/)
 * [Lego EV3](https://www.ev3dev.org/)
 * [LinkIt Smart 7688](https://www.seeedstudio.com/LinkIt-Smart-7688-p-2573.html)
 * Next Thing Co - C.H.I.P.
@@ -66,7 +66,7 @@ Supported boards/methods:
   cpuinfo      Read /proc/cpuinfo
   jetson       nVidia Jetson
   device_tree  Read /proc/device-tree/serial-number
-  bbb          Beaglebone Black
+  bbb          Beaglebone Black and BeaglePlay
   macaddr      Read eth0's MAC address
   linkit       LinkIt Smart (WLAN MAC address)
   binfile      Read '-l' bytes from the file '-f' at offset '-k'
