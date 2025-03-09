@@ -1,6 +1,6 @@
 # boardid
 
-[![CircleCI](https://circleci.com/gh/nerves-project/boardid.svg?style=svg)](https://circleci.com/gh/nerves-project/boardid)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/nerves-project/boardid/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/nerves-project/boardid/tree/main)
 [![REUSE status](https://api.reuse.software/badge/github.com/nerves-project/boardid)](https://api.reuse.software/info/github.com/nerves-project/boardid)
 
 This program looks up a device-specific serial number and prints it. The
@@ -124,12 +124,3 @@ they're assigned.
 
 This work is licensed under multiple licenses. Individual files are labeled
 following the [REUSE recommendations](https://reuse.software).
-
-For following summarizes the licensing:
-
-* All original source code is licensed under Apache-2.0
-* CRC32 calculation code states "You may use this program, or code or tables
-  extracted from it, as desired without restriction."
-* Configuration and data files are licensed under CC0-1.0
-* Documentation is CC-BY-4.0
-

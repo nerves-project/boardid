@@ -1,12 +1,31 @@
-version: 2
+version: 2.1
+
 jobs:
+  check-license:
+    docker:
+      - image: fsfe/reuse:latest
+    steps:
+      - checkout
+      - run: reuse lint
+
   build:
     docker:
-      - image: cimg/base:2022.12
+      - image: cimg/base:2025.03
 
     steps:
       - checkout
-      - run: sudo apt-get update && sudo apt-get install -y xxd reuse
+      - run: sudo apt-get update && sudo apt-get install -y xxd
       - run: make
       - run: make check
-      - run: reuse lint
+
+workflows:
+  checks:
+    jobs:
+      - check-license:
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          filters:
+            tags:
+              only: /.*/

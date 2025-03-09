@@ -1,4 +1,5 @@
-// SPDX-FileCopyrightText: 2021 Nerves Project Developers
+// SPDX-FileCopyrightText: 2021 Dömötör Gulyás
+// SPDX-FileCopyrightText: 2021 Frank Hunleth
 //
 // SPDX-License-Identifier: Apache-2.0
 
