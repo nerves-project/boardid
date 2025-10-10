@@ -71,7 +71,8 @@ static const char *linkit_aliases[] = {
 };
 
 static const char *uboot_env_aliases[] = {
-    "uboot_env",  "Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the variable '-u'",
+    "uboot_env",  "Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the \n"
+    "             variable '-u', defaults to values from '/etc/fw_env.config'",
     NULL,       NULL
 };
 
