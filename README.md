@@ -49,40 +49,41 @@ Usage: boardid [OPTION]...
 Options:
   -b <board/method> Use the specified board or detection method for
                     reading the ID.
-  -f <path>         The file to read for the 'binfile'/'uenv' methods
+  -f <path>         The file to read for the methods requiring files
   -k <offset>       The offset in bytes for the 'binfile'/`uenv' methods
   -l <count>        The number of bytes to read for the 'binfile'/'uenv' methods
   -u <varname>      U-boot environment variable name for the 'uenv' method
   -n <count>        Print out count characters (least significant ones)
   -p <string>       Prefix an ID with the specific string
-  -a <i2c address>  I2C address for the `atecc508a`/`nerves_key` methods
   -r <prefix>       Root directory prefix (used for unit tests)
+  -a <i2c address>  I2C bus address
   -X                Print capital hex digits for `binfile`/`atecc508a` methods
   -v                Print out the program version
 
 '-b' can be specified multiple times to try more than one method.
 
 Supported boards/methods:
-  rpi          Raspberry Pi (all models)
-    rpi_eth0   Raspberry Pi eth0 MAC address
-    rpi_wlan0  Raspberry Pi wlan0 MAC address
-  ev3          Lego EV3
-  chip         Next Thing Co - C.H.I.P.
-  cpuinfo      Read /proc/cpuinfo
-  jetson       nVidia Jetson
+  atecc508a  Read an ATECC508A (I2C device '-f', I2C address '-a')
+  bbb        Beaglebone and BeaglePlay
+  binfile    Read '-l' bytes from the file '-f' at offset '-k'
+  rpi        Raspberry Pi (all models)
+  ev3        Lego EV3
+  chip       Next Thing Co - C.H.I.P.
+  cpuinfo    Read /proc/cpuinfo
+  jetson     nVidia Jetson
   device_tree  Read /proc/device-tree/serial-number
-  bbb          Beaglebone Black and BeaglePlay
-  macaddr      Read eth0's MAC address
-  linkit       LinkIt Smart (WLAN MAC address)
-  binfile      Read '-l' bytes from the file '-f' at offset '-k'
-  uboot_env    Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the variable '-u'
-  atecc508a    Read an ATECC508A (I2C device '-f', I2C address '-a')
-  nerves_key   Read a NervesKey (I2C device '-f', I2C address '-a')
-  dmi          Read the system ID out of the SMBIOS/DMI
-  script       Run a script to get the ID (Specify script with '-f')
-  force        Force the ID (Specify ID with '-f')
-
-Without the `-b` option, `boardid` will try a few methods of determining an ID.
+  dmi        Read the system ID out of the SMBIOS/DMI
+  force      Force the ID (Specify ID with '-f')
+  grisp      GRiSP
+  linkit     LinkIt Smart (WLAN MAC address)
+  macaddr    Read eth0's MAC address
+  nerves_key  Read a NervesKey (I2C device '-f', I2C address '-a')
+  rpi_eth0   Raspberry Pi eth0 MAC address
+  rpi_wlan0  Raspberry Pi wlan0 MAC address
+  script     Run a script to get the ID (Specify script with '-f')
+  uboot_env  Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the
+             variable '-u', defaults to values from '/etc/fw_env.config'
+```
 
 ## Example
 
