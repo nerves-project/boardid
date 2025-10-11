@@ -1,3 +1,8 @@
+<!--
+  SPDX-License-Identifier: CC-BY-4.0
+  SPDX-FileCopyrightText: 2016 Frank Hunleth
+-->
+
 # boardid
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/nerves-project/boardid/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/nerves-project/boardid/tree/main)
