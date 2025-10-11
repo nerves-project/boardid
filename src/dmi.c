@@ -18,9 +18,9 @@ struct dmi_info {
     const char *serial;
 };
 
-static const int max_strings = 16;
+#define MAX_STRINGS 16
 
-static int index_strings(const uint8_t *data, int max_len, const char **strings, int max_strings)
+static int index_strings(const uint8_t *data, int max_len, const char **strings, size_t max_strings)
 {
     // Scan the string data and index the strings
 
@@ -49,7 +49,7 @@ static int index_strings(const uint8_t *data, int max_len, const char **strings,
     return p - data + 1;
 }
 
-static int scan_system_information(const uint8_t *structure, const char **strings, struct dmi_info *result)
+static int scan_system_information(const uint8_t *structure, const char **strings, size_t max_strings, struct dmi_info *result)
 {
     uint8_t structure_len = structure[1];
 
@@ -64,13 +64,13 @@ static int scan_system_information(const uint8_t *structure, const char **string
     return 0;
 }
 
-static int scan_smbios_structure(const uint8_t *structure, const char **strings, struct dmi_info *result)
+static int scan_smbios_structure(const uint8_t *structure, const char **strings, size_t max_strings, struct dmi_info *result)
 {
     uint8_t structure_type = structure[0];
 
     switch (structure_type) {
         case 1: // System information
-            return scan_system_information(structure, strings, result);
+            return scan_system_information(structure, strings, max_strings, result);
 
         case 0: // BIOS Information
         case 3: // System enclosure
@@ -99,11 +99,11 @@ static int scan_smbios_structures(const uint8_t *data, int len, struct dmi_info 
         if (structure_len > len)
            break;
 
-        const char *strings[max_strings];
+        const char *strings[MAX_STRINGS];
 
-        int all_string_len = index_strings(data + structure_len, len - structure_len, strings, max_strings);
+        int all_string_len = index_strings(data + structure_len, len - structure_len, strings, MAX_STRINGS);
 
-        if (scan_smbios_structure(structure, strings, result) == 0)
+        if (scan_smbios_structure(structure, strings, MAX_STRINGS, result) == 0)
             break;
 
         int total_len = structure_len + all_string_len;
