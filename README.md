@@ -1,6 +1,7 @@
 <!--
-  SPDX-License-Identifier: CC-BY-4.0
   SPDX-FileCopyrightText: 2016 Frank Hunleth
+  SPDX-FileCopyrightText: 2021 Dömötör Gulyás
+  SPDX-License-Identifier: CC-BY-4.0
 -->
 
 # boardid

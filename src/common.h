@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: 2016 Frank Hunleth
 // SPDX-FileCopyrightText: 2023 Jon Ringle
+// SPDX-FileCopyrightText: 2025 Lars Wikman
 //
 // SPDX-License-Identifier: Apache-2.0
 
