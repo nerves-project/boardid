@@ -3,6 +3,7 @@ version = 1
 [[annotations]]
 path = [
  ".circleci/config.yml",
+ ".github/CODEOWNERS",
  ".gitignore",
  "CHANGELOG.md",
  "NOTICE",
