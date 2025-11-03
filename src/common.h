@@ -33,8 +33,8 @@ struct boardid_options
 
     // Options that depend on the querier
     const char *filename;
-    int offset;
-    int size;
+    off_t offset;
+    size_t size;
     const char *uenv_varname;
     int capital_hex;
     int i2c_address;

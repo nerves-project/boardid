@@ -303,7 +303,7 @@ int main(int argc, char *argv[])
         case 'k':
             if (current_set < 0)
                 errx(EXIT_FAILURE, "Specify '-b' first");
-            options[current_set].id_options.offset = strtol(optarg, 0, 0);
+            options[current_set].id_options.offset = strtoll(optarg, 0, 0);
             break;
 
         case 'l':

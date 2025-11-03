@@ -20,8 +20,8 @@
 
 struct uboot_env_location {
     char filename[256];
-    int offset;
-    int size;
+    off_t offset;
+    size_t size;
     bool redundant;
 };
 
@@ -115,14 +115,15 @@ static int find_uboot_env(const struct boardid_options *options,
         if (fgets(line, sizeof(line), fp) == NULL)
             break;
 
-        int num = sscanf(line, "%255s %i %i",
-            locations[i].filename,
-            &locations[i].offset,
-            &locations[i].size);
-        locations[i].redundant = false;
+        long long offset;
+        int size;
+        int num = sscanf(line, "%255s %lli %i", locations[i].filename, &offset, &size);
 
         // Check for a match that's not a comment
-        if (num == 3 && locations[i].filename[0] != '#') {
+        if (num == 3 && locations[i].filename[0] != '#' && offset >= 0 && size > 0) {
+            locations[i].offset = offset;
+            locations[i].size = size;
+            locations[i].redundant = false;
             i++;
         }
     }
