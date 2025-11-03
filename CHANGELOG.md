@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.14.1
+
+* New features
+  * U-Boot environment blocks containing board ID information can now be located
+    at offsets beyond 2 GB.
+  * Copyright and licensing have been updated to conform to the REUSE
+    specification.
+
 ## v1.14.0
 
 * New features
