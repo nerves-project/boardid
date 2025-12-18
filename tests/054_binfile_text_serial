@@ -1,0 +1,40 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2025 Frank Hunleth
+# SPDX-FileCopyrightText: 2025 Lars Wikman
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#
+# Read ASCII serial number from a binary file (simulating factory data structure)
+#
+
+# Create a simulated factory data binary with ASCII serial number at offset 88
+# Structure layout matches factory_data struct:
+# 0-3: magic (4 bytes) - "$FA!"
+# 4-7: crc (4 bytes)
+# 8: version (1 byte)
+# 9: production_mode_oem (1 byte)
+# 10-15: reserved (6 bytes)
+# 16-31: hardware_info (16 bytes)
+# 32-47: uuid (16 bytes)
+# 48-51: manu_year (4 bytes)
+# 52-55: manu_wk_no (4 bytes)
+# 56-87: serial_number (32 bytes)
+# 88-119: board_serial_number (32 bytes) <- Our target at offset 0x58
+
+xxd -r - $WORK/factory_data <<EOF
+00000000: 2446 4121 0000 0000 0100 0000 0000 0000  \$FA!............
+00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+00000020: 1122 3344 5566 7788 99aa bbcc ddee ff00  ."3DUfw.........
+00000030: 0000 0000 0000 0000 4445 5653 4e31 3233  ........DEVSN123
+00000040: 3435 3600 0000 0000 0000 0000 0000 0000  456.............
+00000050: 0000 0000 0000 0000 424f 4152 4453 4e31  ........BOARDSN1
+00000060: 3233 3435 3600 0000 0000 0000 0000 0000  23456...........
+00000070: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+EOF
+
+CMDLINE="-b binfile -t text -f /factory_data -l 32 -k 88"
+
+cat >$EXPECTED <<EOF
+BOARDSN123456
+EOF

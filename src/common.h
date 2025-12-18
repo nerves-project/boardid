@@ -23,9 +23,22 @@
 #define str(s) #s
 #define PROGRAM_VERSION_STR xstr(PROGRAM_VERSION)
 
+enum output_format {
+    OUTPUT_FORMAT_LOWERCASE_HEX = 0,
+    OUTPUT_FORMAT_UPPERCASE_HEX,
+    OUTPUT_FORMAT_BE_DECIMAL,
+    OUTPUT_FORMAT_LE_DECIMAL,
+    OUTPUT_FORMAT_TEXT
+};
+
 FILE *fopen_helper(const char *filename, const char *mode);
-void bin_to_hex(const uint8_t *input, size_t len, int capital_hex, char *output);
 void merge_config(int argc, char *argv[], int *merged_argc, char **merged_argv, int max_args);
+
+// The maximum output length for format_binary_data is for the decimal format,
+// which is about 5 characters for every 2-bytes of input.
+// 5/2 = 2.5 ~= 8*log10(2).
+#define FORMAT_BINARY_OUTPUT_LENGTH(len) ((len + 4) * 5 / 2 + 1)
+void format_binary_data(const uint8_t *input, size_t len, enum output_format format, char *output);
 
 struct boardid_options
 {
@@ -37,8 +50,9 @@ struct boardid_options
     off_t offset;
     size_t size;
     const char *uenv_varname;
-    int capital_hex;
     int i2c_address;
+    enum output_format output_format;
+    int capital_hex; // Superseded by output_format but kept to support -X option
 };
 
 bool atecc508a_id(const struct boardid_options *options, char *buffer);

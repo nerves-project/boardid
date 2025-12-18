@@ -29,7 +29,7 @@ mechanisms:
 * Reading a serial number from `/proc/cpuinfo`
 * The default Raspberry Pi `eth0` and `wlan0` MAC addresses
 * Reading the MAC address of `eth0`
-* Reading bytes from a file
+* Reading bytes from a file and interpret as hex, decimal or text
 * Reading a key from the U-Boot environment
 * Reading an [ATECC508A/608A](https://www.microchip.com/wwwproducts/en/ATECC508A)'s serial number via an I2C bus
 * Reading the serial number stored in a [NervesKey](https://github.com/nerves-hub/nerves_key/)'s OTP memory
@@ -58,6 +58,7 @@ Options:
   -p <string>       Prefix an ID with the specific string
   -r <prefix>       Root directory prefix (used for unit tests)
   -a <i2c address>  I2C bus address
+  -t <format>       Output format when converting from binary. See below.
   -X                Print capital hex digits for `binfile`/`atecc508a` methods
   -v                Print out the program version
 
@@ -84,6 +85,15 @@ Supported boards/methods:
   script     Run a script to get the ID (Specify script with '-f')
   uboot_env  Read a U-Boot environment (file '-f', offset '-k', length '-l') and use the
              variable '-u', defaults to values from '/etc/fw_env.config'
+
+Supported binary to text conversions:
+  hex                   Convert to a lower case hex string (default)
+  uppercase_hex         Convert to a upper case hex string
+  lowercase_hex         Convert to a lower case hex string
+  decimal               Interpret bytes in little endian and output as a decimal
+  big_endian_decimal    Interpret bytes in big endian and output as a decimal
+  little_endian_decimal Interpret bytes in little endian and output as a decimal
+  text                  Copy bytes directly like they are already text
 ```
 
 ## Example
@@ -144,13 +154,31 @@ The ID does not contain any colons.
 boardid -b macaddr -n 4
 ```
 
-### Read bytes from a binary file
+### Read bytes as a hex string from a binary file
 
 ```sh
 boardid -b binfile -f /dev/mtdblock2 -l 6 -k 0x28
 ```
 
 Use `-X` for uppercase hex output.
+
+### Read bytes as a text string from a binary file
+
+This is similar to the previous example, but the serial
+number is already text so no conversion is needed.
+
+```sh
+boardid -b binfile -f /dev/mtdblock2 -l 8 -k 0x28 -t text
+```
+
+### Read bytes as a decimal string from a binary file
+
+This is similar to the hex example, but the serial
+number should be interpreted as a decimal number. In this case, it's little endian, but it doesn't have to be.
+
+```sh
+boardid -b binfile -f /dev/mtdblock2 -l 8 -k 0x28 -t little_endian_decimal
+```
 
 ### Read serial_number variable from U-Boot environment
 

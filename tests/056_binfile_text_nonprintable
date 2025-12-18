@@ -1,0 +1,22 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2025 Frank Hunleth
+# SPDX-FileCopyrightText: 2025 Lars Wikman
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#
+# Read text serial number from a binary file with non-printable characters
+# Non-printable characters should be preserved.
+#
+
+# Create a binary file with embedded non-printable bytes
+# The string should be "BOARD123" but with some non-printable bytes mixed in
+xxd -r - $WORK/factory_data <<EOF
+00000000: 424f 4152 0144 3132 3300 0000 0000 0000  BOAR.D123.......
+00000010: 0000 0000 0000 0000 0000 0000 0000 0000  ................
+EOF
+
+# Read from offset 0, length 13 bytes: "BOAR\x01D123\x00..."
+CMDLINE="-b binfile -t text -f /factory_data -l 13 -k 0"
+
+printf 'BOAR\x01D123\n' >$EXPECTED

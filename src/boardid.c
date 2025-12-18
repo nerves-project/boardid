@@ -144,6 +144,7 @@ static void usage()
     printf("  -p <string>       Prefix an ID with the specific string\n");
     printf("  -r <prefix>       Root directory prefix (used for unit tests)\n");
     printf("  -a <i2c address>  I2C bus address\n");
+    printf("  -t <format>       Output format when converting from binary. See below.\n");
     printf("  -X                Print capital hex digits for `binfile`/`atecc508a` methods\n");
     printf("  -v                Print out the program version\n");
     printf("\n");
@@ -155,6 +156,14 @@ static void usage()
             printf("  %-9s  %s\n", alias[0], alias[1]);
     }
     printf("\n");
+    printf("Supported binary to text conversions:\n");
+    printf("  hex                   Convert to a lower case hex string (default)\n");
+    printf("  uppercase_hex         Convert to a upper case hex string\n");
+    printf("  lowercase_hex         Convert to a lower case hex string\n");
+    printf("  decimal               Interpret bytes in little endian and output as a decimal\n");
+    printf("  big_endian_decimal    Interpret bytes in big endian and output as a decimal\n");
+    printf("  little_endian_decimal Interpret bytes in little endian and output as a decimal\n");
+    printf("  text                  Copy bytes directly like they are already text\n");
 }
 
 static const struct board_id_pair *find_board(const char *name)
@@ -283,7 +292,7 @@ int main(int argc, char *argv[])
     merge_config(argc, argv, &merged_argc, merged_argv, MAX_ARGC);
 
     int opt;
-    while ((opt = getopt(merged_argc, merged_argv, "a:b:f:k:l:n:p:r:vu:X?")) != -1) {
+    while ((opt = getopt(merged_argc, merged_argv, "a:b:f:k:l:n:p:r:t:vu:X?")) != -1) {
         switch (opt) {
         case 'b':
             current_set++;
@@ -354,9 +363,37 @@ int main(int argc, char *argv[])
             options[current_set].id_options.uenv_varname = optarg;
             break;
 
+        case 't':
+            if (current_set < 0)
+                errx(EXIT_FAILURE, "Specify '-b' first");
+            if (strcmp(optarg, "hex") == 0) {
+                if (options[current_set].id_options.capital_hex)
+                    options[current_set].id_options.output_format = OUTPUT_FORMAT_UPPERCASE_HEX;
+                else
+                    options[current_set].id_options.output_format = OUTPUT_FORMAT_LOWERCASE_HEX;
+            } else if (strcmp(optarg, "uppercase_hex") == 0) {
+                options[current_set].id_options.output_format = OUTPUT_FORMAT_UPPERCASE_HEX;
+                options[current_set].id_options.capital_hex = 1;
+            } else if (strcmp(optarg, "lowercase_hex") == 0) {
+                options[current_set].id_options.output_format = OUTPUT_FORMAT_LOWERCASE_HEX;
+                options[current_set].id_options.capital_hex = 0;
+            } else if (strcmp(optarg, "decimal") == 0) {
+                options[current_set].id_options.output_format = OUTPUT_FORMAT_LE_DECIMAL;
+            } else if (strcmp(optarg, "big_endian_decimal") == 0) {
+                options[current_set].id_options.output_format = OUTPUT_FORMAT_BE_DECIMAL;
+            } else if (strcmp(optarg, "little_endian_decimal") == 0) {
+                options[current_set].id_options.output_format = OUTPUT_FORMAT_LE_DECIMAL;
+            } else if (strcmp(optarg, "text") == 0) {
+                options[current_set].id_options.output_format = OUTPUT_FORMAT_TEXT;
+            } else {
+                errx(EXIT_FAILURE, "Unknown output format '%s'", optarg);
+            }
+            break;
+
         case 'X':
             if (current_set < 0)
                 errx(EXIT_FAILURE, "Specify '-b' first");
+            options[current_set].id_options.output_format = OUTPUT_FORMAT_UPPERCASE_HEX;
             options[current_set].id_options.capital_hex = 1;
             break;
 
