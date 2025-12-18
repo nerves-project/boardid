@@ -1,0 +1,27 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2025 Frank Hunleth
+#
+# SPDX-License-Identifier: Apache-2.0
+
+#
+# Prefer reading device tree serial numbers from
+# /sys/firmware/devicetree/base/serial-number.
+#
+# Tests 037 and 038 cover falling back to /proc/device-tree/serial-number.
+#
+
+mkdir -p "$WORK/sys/firmware/devicetree/base"
+cat >"$WORK/sys/firmware/devicetree/base/serial-number" << EOF
+1000000022d28465
+EOF
+
+mkdir -p "$WORK/proc/device-tree"
+cat >"$WORK/proc/device-tree/serial-number" << EOF
+NOT_THE_ID_YOU_WANT
+EOF
+
+CMDLINE="-b device_tree"
+
+cat >"$EXPECTED" <<EOF
+1000000022d28465
+EOF

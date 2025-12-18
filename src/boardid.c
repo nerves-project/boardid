@@ -47,7 +47,7 @@ static const char *rpi_wlan0_aliases[] = {
 
 static const char *device_tree_aliases[] = {
     "jetson",   "nVidia Jetson",
-    "device_tree",  "Read /proc/device-tree/serial-number",
+    "device_tree",  "Read /sys/firmware/devicetree/base/serial-number",
     NULL,       NULL
 };
 

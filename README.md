@@ -72,7 +72,7 @@ Supported boards/methods:
   chip       Next Thing Co - C.H.I.P.
   cpuinfo    Read /proc/cpuinfo
   jetson     nVidia Jetson
-  device_tree  Read /proc/device-tree/serial-number
+  device_tree Read /sys/firmware/devicetree/base/serial-number
   dmi        Read the system ID out of the SMBIOS/DMI
   force      Force the ID (Specify ID with '-f')
   grisp      GRiSP
