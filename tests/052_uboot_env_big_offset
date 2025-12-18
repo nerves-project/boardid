@@ -158,7 +158,7 @@ AHZhcjM9QSBzdHJpbmcgd2l0aCA9AHZhcjQ9NAAA////////////////////////////////////
 //////////////////////////////////////////////////////8=
 EOF
 
-dd if=$WORK/dev/tmp of=$WORK/dev/mmcblk0 bs=1 seek=14002683904
+dd if=$WORK/dev/tmp of=$WORK/dev/mmcblk0 bs=1 seek=14002683904 2>/dev/null
 
 CMDLINE="-b uboot_env -f /dev/mmcblk0 -l 8192 -u serial_number -k 14002683904 -n 4"
 
