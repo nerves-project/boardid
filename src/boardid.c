@@ -78,7 +78,7 @@ static const char *uboot_env_aliases[] = {
 };
 
 static const char *atecc508a_aliases[] = {
-    "atecc508a",  "Read an ATECC508A (I2C device '-f', I2C address '-a')",
+    "atecc508a",  "Read an ATECC508* or ATECC608* (I2C device '-f', I2C address '-a')",
     NULL,       NULL
 };
 
@@ -93,7 +93,7 @@ static const char *dmi_aliases[] = {
 };
 
 static const char *grisp_aliases[] = {
-    "grisp",      "GRiSP",
+    "grisp",      "GRiSP 2 board",
     NULL,       NULL
 };
 

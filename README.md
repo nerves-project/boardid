@@ -64,7 +64,7 @@ Options:
 '-b' can be specified multiple times to try more than one method.
 
 Supported boards/methods:
-  atecc508a  Read an ATECC508A (I2C device '-f', I2C address '-a')
+  atecc508a  Read an ATECC508* or ATECC608* (I2C device '-f', I2C address '-a')
   bbb        Beaglebone and BeaglePlay
   binfile    Read '-l' bytes from the file '-f' at offset '-k'
   rpi        Raspberry Pi (all models)
@@ -75,7 +75,7 @@ Supported boards/methods:
   device_tree Read /sys/firmware/devicetree/base/serial-number
   dmi        Read the system ID out of the SMBIOS/DMI
   force      Force the ID (Specify ID with '-f')
-  grisp      GRiSP
+  grisp      GRiSP 2 board
   linkit     LinkIt Smart (WLAN MAC address)
   macaddr    Read eth0's MAC address
   nerves_key  Read a NervesKey (I2C device '-f', I2C address '-a')
@@ -98,7 +98,7 @@ robot@ev3dev:~$
 
 ## Config file
 
-It's possible to come up with fairly long and complicated commandlines for some
+It's possible to come up with fairly long and complicated command lines for some
 devices. `boardid` supports reading arguments from `/etc/boardid.config` so that
 you need not duplicate the commandline arguments everywhere `boardid` is used.
 A config file can have comments. Here's an example:
@@ -118,6 +118,105 @@ A config file can have comments. Here's an example:
 # If the EEPROM wasn't programmed, use the MAC address
 -b macaddr -n 4
 ```
+
+## Cookbook
+
+### Read from device tree
+
+This is a very common location for serial numbers and if you're unsure, try this
+first. It reads `/sys/firmware/devicetree/base/serial-number`.
+
+```sh
+boardid -b device_tree
+```
+
+### Read eth0's MAC address
+
+```sh
+boardid -b macaddr
+```
+
+The ID does not contain any colons.
+
+### Read last 4 hex digits of eth0 MAC
+
+```sh
+boardid -b macaddr -n 4
+```
+
+### Read bytes from a binary file
+
+```sh
+boardid -b binfile -f /dev/mtdblock2 -l 6 -k 0x28
+```
+
+Use `-X` for uppercase hex output.
+
+### Read serial_number variable from U-Boot environment
+
+```sh
+boardid -b uboot_env -u serial_number
+```
+
+Defaults to values from `/etc/fw_env.config` if `-f`, `-k`, `-l` not specified.
+
+### Force a specific ID
+
+```sh
+boardid -b force -f 0123456789
+```
+
+Useful for testing or overriding.
+
+### Read from SMBIOS/DMI (x86 industrial boards)
+
+```sh
+boardid -b dmi
+```
+
+### Run custom script
+
+```sh
+boardid -b script -f /usr/local/bin/get_serial.sh
+```
+
+This is the ultimate escape hatch for getting a serial number. Please log an
+issue if you run into this as it would be nice for `boardid` to support all
+situations.
+
+### Add prefix to serial number
+
+This is useful for prepending a product abbreviation on the IDs for ease of
+figuring out what kind of thing a serial number came from. It's not recommended
+to use this feature for crafting hostnames if they're different from the way you
+represent serial numbers everywhere else.
+
+```sh
+boardid -b rpi -p RPI
+```
+
+Output: `RPI19f2f468`
+
+### Try multiple methods (fallback)
+
+```sh
+boardid -b uboot_env -u serial_number -b macaddr -n 4
+```
+
+Tries U-Boot first, falls back to MAC address.
+
+### Read a Microchip ATECC508/608 cryptographic module's serial
+
+```sh
+boardid -b atecc508a -f /dev/i2c-0 -a 0x35 -X
+```
+
+Reads the 9-byte serial number (18 hexadecimal characters) from a module on bus `i2c-0` with I2C
+address 0x35. Both ATECC508* and ATECC608* parts are supported. Since `boardid`
+directly reads the serial number, it may try to access the device when other
+code is using it. This results in a transient failure which is easily recovered
+from by retrying. If you need more retries, repeat the `-b atecc508a -f
+/dev/i2c-0 -a 0x35 -X` arguments more than once.
 
 ## Caveats
 
