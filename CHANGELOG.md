@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.15.0
+
+* New features
+  * The `-b binfile` option can now be passed `-t <format type>` to adjust how
+    it interprets binary identifier data. The default is to convert to ASCII hex
+    characters, but it can be changed to things like `-t text` when the binary
+    data is already ASCII or UTF-8 text or `-t big_endian_decimal` when the
+    bytes should be converted to a number and then output as decimal. See the
+    docs for options.
+
+* Changes
+  * Read `/sys/firmware/devicetree/base/serial-number` first when pulling
+    identifiers from the device tree. If this doesn't exist, it checks the older
+    `/proc` location. The kernel has had a symlink from the `/proc` location to
+    the sysfs location for what seems like a long time now.
+
 ## v1.14.1
 
 * New features
